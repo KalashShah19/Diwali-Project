@@ -1,0 +1,89 @@
+@{
+    ViewData["title"] = "Admin: Manage Standard";
+}
+
+<h1 class="mb-3">Standard Management</h1>
+<span id="notification"></span>
+<div id="standardgrid"></div>
+
+@section Scripts {
+    <script>
+        $("#notification").kendoNotification({
+            position: {
+                top: 30
+            }
+        });
+
+        const standardGrid = $("#standardgrid").kendoGrid({
+            dataSource: {
+                transport: {
+                    read: {
+                        url: `${apihost}/api/Admin/GetStandards`,
+                        dataType: "json",
+                        complete: function (data) {
+                            if (data.status === 200) {
+                                $("#notification").getKendoNotification().show("Standards fetched successfully", "info");
+                            } else {
+                                console.log(data)
+                                $("#notification").getKendoNotification().show(data.statusText, "error");
+                            }
+                        }
+                    },
+                    create: {
+                        url: (data) => `${apihost}/api/admin/AddStandard?standard=${data.standard}`,
+                        method: "POST",
+                        dataType: "json",
+                        complete: function (data) {
+                            if (data.status === 200) {
+                                $("#notification").getKendoNotification().show(data.responseJSON.message, "info");
+                                standardGrid.data("kendoGrid").dataSource.read();
+                            } else {
+                                console.log(data)
+                                $("#notification").getKendoNotification().show(data.responseJSON.message, "error");
+                            }
+                        }
+                    },
+                    destroy: {
+                        url: (data) => `${apihost}/api/Admin/RemoveStandard?standard=${data.standard}`,
+                        method: "DELETE",
+                        dataType: "json",
+                        complete: function (data) {
+                            if (data.status === 200) {
+                                console.log(data);
+                                $("#notification").getKendoNotification().show(data.responseJSON.message, "info");
+                                standardGrid.data("kendoGrid").dataSource.read();
+                            } else {
+                                console.log(data)
+                                $("#notification").getKendoNotification().show(data.responseJSON.message, "error");
+                            }
+                        }
+                    }
+                },
+
+                schema: {
+                    data: function (data) {
+                        return data.map(function (e) {
+                            return { standard: e };
+                        });
+                    },
+                    model: {
+                        id: "standard"
+                    }
+                },
+                pageSize: 12,
+            },
+            columns: [
+                {
+                    field: "standard", title: "Standard", editor: function (container, options) {
+                        $(`<input type='text' name='${options.field}'>`).appendTo(container).kendoTextBox({});
+                    }
+                },
+                { command: ["destroy"], title: "Action" }
+            ],
+            toolbar: ["create"],
+            height: 500,
+            editable: "popup",
+            sortable: true,
+        });
+    </script>
+}

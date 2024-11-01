@@ -5,6 +5,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
+builder.Services.AddCors(policy => {
+    policy.AddPolicy("CorsPolicy", rules => {
+        rules.AllowAnyMethod();
+        rules.AllowAnyOrigin();
+    });
+});
 
 var app = builder.Build();
 
@@ -18,5 +24,6 @@ if (app.Environment.IsDevelopment())
 app.UseStaticFiles();
 app.UseHttpsRedirection();
 app.MapControllers();
+app.UseCors("CorsPolicy");
 
 app.Run();

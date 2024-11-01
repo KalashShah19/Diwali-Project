@@ -1,0 +1,47 @@
+@{
+    ViewData["title"] = "Admin: View Feedback";
+}
+
+<h1 class="mb-3">Student Feedbacks</h1>
+<span id="notification"></span>
+<div id="feedbackgrid"></div>
+
+@section Scripts {
+    <script>
+        $("#notification").kendoNotification({
+            position: {
+                top: 30
+            }
+        });
+        $("#feedbackgrid").kendoGrid({
+            dataSource: {
+                transport: {
+                    read: {
+                        url: `${apihost}/api/admin/GetFeedbacks`,
+                        dataType: "json",
+                        complete: function (data) {
+                            if (data.status === 200) {
+                                $("#notification").getKendoNotification().show("Feedbacks fetched successfully", "info");
+                            } else {
+                                console.log(data)
+                                $("#notification").getKendoNotification().show(data.statusText, "error");
+                            }
+                        }
+                    }
+                },
+                pageSize: 10
+            },
+            columns: [
+                { field: "feedbackDate", title: "Feedback Date", template: (option) => new Date(Date.parse(option.feedbackDate)).toLocaleDateString("en-gb") },
+                { field: "teacherId", title: "Teacher Name" },
+                { field: "rating", title: "Ratings" },
+                { field: "comment", title: "Comment", template: (options) => options.comment ? options.comment : "No Comment", sortable: false },
+                { field: "batchYear", title: "Batch Year" }
+            ],
+            height: 500,
+            sortable: true,
+            filterable: true,
+            pageable: true
+        });
+    </script>
+}

@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - MVC</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/kendo/dist/css/kendo.common.min.css" />
+    <link rel="stylesheet" href="~/lib/kendo/dist/css/kendo.default.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/MVC.styles.css" asp-append-version="true" />
 </head>
@@ -44,12 +46,13 @@
             &copy; 2024 - Team Full Time
         </div>
     </footer>
-    @* <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script> *@
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="https://kendo.cdn.telerik.com/2024.3.1015/mjs/kendo.grid.js" type="module"></script>
-    <script src="https://kendo.cdn.telerik.com/2024.3.1015/mjs/kendo.all.js" type="module"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/kendo/dist/js/kendo.all.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        const apihost = "http://localhost:5064";
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 
