@@ -69,14 +69,14 @@ public class FeesRepository : IFeesRepository
 
     public void RemoveFeeInfo(int feesinfoid)
     {
-        NpgsqlCommand deleteFeeInfoCommand = new("DELETE FROM t_standards WHERE c_id = @id", connection);
+        NpgsqlCommand deleteFeeInfoCommand = new("DELETE FROM t_fees_structure WHERE c_id = @id", connection);
         deleteFeeInfoCommand.Parameters.AddWithValue("id", feesinfoid);
         deleteFeeInfoCommand.ExecuteNonQuery();
     }
 
     public void UpdateFeeInfo(FeesInfo.Get feesInfo)
     {
-        NpgsqlCommand addFeeStructureCommand = new("UPDATE t_fees_structure SET c_amount = @amount, c_batch_year = @batchyear,  c_standard = @standard WHERE c_id = @id", connection);
+        NpgsqlCommand addFeeStructureCommand = new("UPDATE t_fees_structure SET c_amount = @amount, c_batch_year = @batchyear, c_standard = @standard WHERE c_id = @id", connection);
         addFeeStructureCommand.Parameters.AddWithValue("amount", feesInfo.Amount);
         addFeeStructureCommand.Parameters.AddWithValue("batchyear", feesInfo.BatchYear);
         addFeeStructureCommand.Parameters.AddWithValue("standard", feesInfo.Standard);

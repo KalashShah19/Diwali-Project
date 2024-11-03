@@ -1,0 +1,81 @@
+@{
+    ViewData["title"] = "Admin: Manage School Information";
+}
+
+<h1 class="mb-3">Manage School Information</h1>
+<span id="notification"></span>
+<form id="schoolinfoform" enctype="multipart/form-data"></form>
+
+@section Scripts {
+    <script>
+        function OnInit() {
+            $.ajax({
+                url: `${apihost}/api/Admin/GetSchoolInfo`,
+                success: function (data) {
+                    $("#schoolinfoform").data("kendoForm").setOptions({
+                        formData: data
+                    });
+
+                    $("#notification").getKendoNotification().show("School Data fetched successfully", "info");
+                },
+                error: function (data) {
+                    $("#notification").getKendoNotification().show(data.responseJSON ? data.responseJSON.title : data.statusText, "error");
+                },
+            });
+        }
+
+        $("#notification").kendoNotification({
+            position: {
+                top: 30
+            }
+        });
+
+        $("#schoolinfoform").kendoForm({
+            items: [
+                {
+                    field: "principalImage", label: "Principal Image", editor: function (container, options) {
+                        $(`<img src='${apihost}/${options.model.principalImage}' height=200 />`).appendTo(container);
+                        $("<input id='principalimage' type='file' >").appendTo(container).kendoUpload({
+                            multiple: false,
+                            validation: {
+                                allowedExtensions: ["JPG", "PNG", "JPEG"]
+                            }
+                        });
+                    }
+                },
+                { field: "principalName", label: "Principal Name", validation: { required: true }, hint: "No Special characters allowed" },
+                { field: "principalQualification", label: "Principal Qualification", validation: { required: true }, hint: "No Special characters allowed except '.'" },
+                { field: "schoolAddress", label: "School Address", validation: { required: true } },
+                { field: "schoolContactNumber", label: "School Contact Number", validation: { required: true } },
+            ],
+            submit: function (e) {
+                e.preventDefault();
+                const files = $("#principalimage").getKendoUpload().getFiles();
+                const formData = new FormData();
+                formData.append("principalName", e.model.principalName);
+                formData.append("principalQualification", e.model.principalQualification);
+                formData.append("schoolAddress", e.model.schoolAddress);
+                formData.append("schoolContactNumber", e.model.schoolContactNumber);
+                if (files.length > 0) formData.append("principalImage", files[0].rawFile);
+
+                $.ajax({
+                    url: `${apihost}/api/Admin/UpdateSchoolInfo`, async: true,
+                    method: "patch",
+                    success: function (data) {
+                        $("#notification").getKendoNotification().show(data.message, "info");
+                        OnInit();
+                    },
+                    error: function (data) {
+                        $("#notification").getKendoNotification().show(data.responseJSON ? data.responseJSON.title : data.statusText, "error");
+                    },
+                    contentType: false,
+                    processData: false,
+                    dataType: "json",
+                    data: formData
+                });
+            }
+        });
+
+        OnInit();
+    </script>
+}
