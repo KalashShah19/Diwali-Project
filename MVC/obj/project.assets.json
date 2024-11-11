@@ -2212,23 +2212,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\intern035\\.nuget\\packages\\": {},
-    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
+    "C:\\Users\\jaina\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\! Kalash\\Tasks\\Project\\Diwali\\MVC\\MVC.csproj",
+      "projectUniqueName": "F:\\! kalash\\Diwali-Project\\MVC\\MVC.csproj",
       "projectName": "MVC",
-      "projectPath": "D:\\! Kalash\\Tasks\\Project\\Diwali\\MVC\\MVC.csproj",
-      "packagesPath": "C:\\Users\\intern035\\.nuget\\packages\\",
-      "outputPath": "D:\\! Kalash\\Tasks\\Project\\Diwali\\MVC\\obj\\",
+      "projectPath": "F:\\! kalash\\Diwali-Project\\MVC\\MVC.csproj",
+      "packagesPath": "C:\\Users\\jaina\\.nuget\\packages\\",
+      "outputPath": "F:\\! kalash\\Diwali-Project\\MVC\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-      ],
       "configFilePaths": [
-        "C:\\Users\\intern035\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\jaina\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -2242,8 +2238,8 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "D:\\! Kalash\\Tasks\\Project\\Diwali\\WebAPI\\WebAPI.csproj": {
-              "projectPath": "D:\\! Kalash\\Tasks\\Project\\Diwali\\WebAPI\\WebAPI.csproj"
+            "F:\\! kalash\\Diwali-Project\\WebAPI\\WebAPI.csproj": {
+              "projectPath": "F:\\! kalash\\Diwali-Project\\WebAPI\\WebAPI.csproj"
             }
           }
         }

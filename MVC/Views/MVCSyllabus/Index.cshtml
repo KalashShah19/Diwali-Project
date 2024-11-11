@@ -1,0 +1,71 @@
+@model IEnumerable<Syllabus>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Syllabus Management</title>
+    <link href="https://kendo.cdn.telerik.com/2023.1.314/styles/kendo.default-v2.min.css" rel="stylesheet" />
+    <script src="https://kendo.cdn.telerik.com/2023.1.314/js/jquery.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2023.1.314/js/kendo.all.min.js"></script>
+</head>
+<body>
+    <div id="gantt"></div>
+
+    <script>
+        $(document).ready(function () {
+            $("#gantt").kendoGantt({
+                dataSource: {
+                    transport: {
+                        read: {
+                            url: "@Url.Action("GetSyllabusData", "Syllabus")",
+                            dataType: "json"
+                        },
+                        update: {
+                            url: "@Url.Action("UpdateSyllabus", "Syllabus")",
+                            dataType: "json",
+                            type: "POST"
+                        },
+                        create: {
+                            url: "@Url.Action("CreateSyllabus", "Syllabus")",
+                            dataType: "json",
+                            type: "POST"
+                        },
+                        destroy: {
+                            url: "@Url.Action("DeleteSyllabus", "Syllabus")",
+                            dataType: "json",
+                            type: "POST"
+                        },
+                        parameterMap: function (data, type) {
+                            return kendo.stringify(data);
+                        }
+                    },
+                    schema: {
+                        model: {
+                            id: "c_SyllabusID",
+                            fields: {
+                                c_SyllabusID: { from: "c_SyllabusID", type: "number" },
+                                c_CWSID: { from: "c_CWSID", type: "number" },
+                                c_title: { from: "c_ChapterName", type: "string" },
+                                c_start: { from: "c_StartDate", type: "date" },
+                                c_end: { from: "c_EndDate", type: "date" },
+                                c_Status: { from: "c_Status", type: "string" }
+                            }
+                        }
+                    }
+                },
+                dependencies: {
+                    dataSource: [] 
+                },
+                columns: [
+                    { field: "c_title", title: "Chapter", width: 150 },
+                    { field: "c_start", title: "Start Date", format: "{0:MM/dd/yyyy}", width: 100 },
+                    { field: "c_end", title: "End Date", format: "{0:MM/dd/yyyy}", width: 100 },
+                    { field: "c_Status", title: "Status", width: 100 }
+                ],
+                editable: true,
+                toolbar: ["create", "save", "cancel"],
+                height: 600
+            });
+        });
+    </script>
+</body>
+</html>
