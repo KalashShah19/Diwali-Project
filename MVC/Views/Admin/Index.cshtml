@@ -1,0 +1,38 @@
+@{
+    ViewData["title"] = "Admin: Index";
+}
+
+<h1 class="mb-3">List of Teachers and Students</h1>
+<div id="treelist"></div>
+
+@section Scripts {
+    <script>
+        $("#treelist").kendoTreeList({
+            dataSource: new kendo.data.TreeListDataSource({
+                transport: {
+                    read: `${apihost}/api/Admin/GetTeacherswithStudents`
+                },
+
+                schema: {
+                    model: {
+                    }
+                }
+            }),
+
+            columns: [
+                { field: "name", title: "Name" },
+                { field: "standard", title: "Standard" },
+                { field: "mobileNumber", title: "Contact Number" },
+                { field: "emailAddress", title: "Email Address" },
+                {
+                    field: "joiningDate", title: "Joining Date", template: function (data) {
+                        const miliseconds = Date.parse(data.joiningDate);
+                        const date = new Date(miliseconds);
+                        return date.toDateString();
+                    }
+                }
+            ],
+
+        });
+    </script>
+}

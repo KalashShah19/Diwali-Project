@@ -25,28 +25,43 @@ namespace MVC.Controllers
             return View();
         }
 
+        [HttpGet]
         public JsonResult GetSyllabusData()
         {
             var syllabusData = new List<Syllabus>();
 
-            con.Open();
-            using (var command = new NpgsqlCommand("SELECT * FROM t_syllabus", con))
-            using (var reader = command.ExecuteReader())
+            using (var connection = new NpgsqlConnection(connectionString))
             {
-                while (reader.Read())
+                connection.Open();
+                using (var command = new NpgsqlCommand("SELECT * FROM t_Syllabus", connection))
+                using (var reader = command.ExecuteReader())
                 {
-                    syllabusData.Add(new Syllabus
+                    while (reader.Read())
                     {
-                        SyllabusID = (int)reader["c_SyllabusID"],
-                        CWSID = (int)reader["c_CWSID"],
-                        ChapterName = (string)reader["c_ChapterName"],
-                        StartDate = (DateTime)reader["c_StartDate"],
-                        EndDate = (DateTime)reader["c_EndDate"],
-                        Status = (string)reader["c_Status"]
-                    });
+                        syllabusData.Add(new Syllabus
+                        {
+                            SyllabusID = (int)reader["c_SyllabusID"],
+                            CWSID = (int)reader["c_CWSID"],
+                            ChapterName = (string)reader["c_chapterName"],
+                            Start = (DateTime)reader["c_start"],
+                            End = (DateTime)reader["c_end"],
+                            Completed = (string)reader["c_completed"]
+                        });
+                    }
                 }
             }
-            return Json(syllabusData);
+
+            var formattedData = syllabusData.Select(s => new
+            {
+                s.SyllabusID,
+                s.CWSID,
+                s.ChapterName,
+                Start = s.Start.ToString("yyyy/MM/dd H:mm"),
+                End = s.End.ToString("yyyy/MM/dd H:mm"),
+                s.Completed,
+            });
+
+            return Json(formattedData);
         }
 
         [HttpPost]
@@ -55,13 +70,13 @@ namespace MVC.Controllers
             using (var connection = new NpgsqlConnection(connectionString))
             {
                 connection.Open();
-                using (var command = new NpgsqlCommand("INSERT INTO t_syllabus (c_CWSID, c_ChapterName, c_StartDate, c_EndDate, c_Status) VALUES (@CWSID, @ChapterName, @StartDate, @EndDate, @Status) RETURNING SyllabusID", connection))
+                using (var command = new NpgsqlCommand("INSERT INTO t_Syllabus (c_CWSID, c_chapterName, c_start, c_end, c_completed) VALUES (@CWSID, @ChapterName, @Start, @End, @Completed) RETURNING c_SyllabusID", connection))
                 {
-                    command.Parameters.AddWithValue("@CWSID", syllabus.CWSID);
-                    command.Parameters.AddWithValue("@ChapterName", syllabus.ChapterName!);
-                    command.Parameters.AddWithValue("@StartDate", syllabus.StartDate);
-                    command.Parameters.AddWithValue("@EndDate", syllabus.EndDate);
-                    command.Parameters.AddWithValue("@Status", syllabus.Status!);
+                    command.Parameters.AddWithValue("@CWSID", 0);
+                    command.Parameters.AddWithValue("@ChapterName", "");
+                    command.Parameters.AddWithValue("@Start", DateTime.Now);
+                    command.Parameters.AddWithValue("@End", DateTime.Now);
+                    command.Parameters.AddWithValue("@Completed", "0");
                     syllabus.SyllabusID = (int)command.ExecuteScalar()!;
                 }
             }
@@ -74,13 +89,13 @@ namespace MVC.Controllers
             using (var connection = new NpgsqlConnection(connectionString))
             {
                 connection.Open();
-                using (var command = new NpgsqlCommand("UPDATE t_syllabus SET c_CWSID = @CWSID, c_ChapterName = @ChapterName, c_StartDate = @StartDate, c_EndDate = @EndDate, c_Status = @Status WHERE c_SyllabusID = @SyllabusID", connection))
+                using (var command = new NpgsqlCommand("UPDATE t_Syllabus SET c_CWSID = @CWSID, c_chapterName = @ChapterName, c_startDate = @Start, c_end = @EndDate, c_completed = @Completed WHERE c_SyllabusID = @SyllabusID", connection))
                 {
                     command.Parameters.AddWithValue("@CWSID", syllabus.CWSID);
                     command.Parameters.AddWithValue("@ChapterName", syllabus.ChapterName!);
-                    command.Parameters.AddWithValue("@StartDate", syllabus.StartDate);
-                    command.Parameters.AddWithValue("@EndDate", syllabus.EndDate);
-                    command.Parameters.AddWithValue("@Status", syllabus.Status!);
+                    command.Parameters.AddWithValue("@Start", syllabus.Start!);
+                    command.Parameters.AddWithValue("@End", syllabus.End!);
+                    command.Parameters.AddWithValue("@Completed", syllabus.Completed!);
                     command.Parameters.AddWithValue("@SyllabusID", syllabus.SyllabusID);
                     command.ExecuteNonQuery();
                 }
@@ -94,19 +109,13 @@ namespace MVC.Controllers
             using (var connection = new NpgsqlConnection(connectionString))
             {
                 connection.Open();
-                using (var command = new NpgsqlCommand("DELETE FROM t_syllabus WHERE c_SyllabusID = @SyllabusID", connection))
+                using (var command = new NpgsqlCommand("DELETE FROM t_Syllabus WHERE c_SyllabusID = @SyllabusID", connection))
                 {
                     command.Parameters.AddWithValue("@SyllabusID", SyllabusID);
                     command.ExecuteNonQuery();
                 }
             }
             return Json(SyllabusID);
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View("Error!");
         }
     }
 }

@@ -1,0 +1,173 @@
+@{
+    ViewData["title"] = "Admin: Manage Classwise Subjects";
+}
+
+<h1 class="mb-3">Manage Classwise Subjects</h1>
+<span id="notification"></span>
+<div id="classwisesubjectgrid"></div>
+
+@section Scripts {
+    <script>
+        $("#notification").kendoNotification({
+            position: {
+                top: 30
+            }
+        });
+        const classwisesubjectgrid = $("#classwisesubjectgrid").kendoGrid({
+            dataSource: {
+                transport: {
+                    read: {
+                        url: `${apihost}/api/Admin/GetClasswiseSubjects`,
+                        dataType: "json",
+                        complete: function (data) {
+                            if (data.status === 200) {
+                                $("#notification").getKendoNotification().show("Classwise subjects fetched successfully", "info");
+                            } else {
+                                $("#notification").getKendoNotification().show(data.statusText, "error");
+                            }
+                        },
+                    },
+
+                    create: {
+                        url: `${apihost}/api/Admin/AddClasswiseSubject`,
+                        dataType: "json",
+                        method: "POST",
+                        contentType: false,
+                        processData: false,
+                        complete: function (data) {
+                            if (data.status === 200) {
+                                $("#notification").getKendoNotification().show(data.responseJSON.message, "info");
+                                classwisesubjectgrid.data("kendoGrid").dataSource.read();
+                            } else {
+                                $("#notification").getKendoNotification().show(data.statusText, "error");
+                            }
+                        },
+                    },
+
+                    destroy: {
+                        url: (data) => `${apihost}/api/Admin/RemoveClasswiseSubject?id=${data.id}`,
+                        method: "DELETE",
+                        dataType: "json",
+                        complete: function (data) {
+                            if (data.status === 200) {
+                                $("#notification").getKendoNotification().show(data.responseJSON.message, "info");
+                                classwisesubjectgrid.data("kendoGrid").dataSource.read();
+                            } else {
+                                $("#notification").getKendoNotification().show(data.statusText, "error");
+                            }
+                        },
+                    },
+
+                    update: {
+                        url: `${apihost}/api/Admin/UpdateClasswiseSubject`,
+                        dataType: "json",
+                        method: "PUT",
+                        contentType: false,
+                        processData: false,
+                        complete: function (data) {
+                            if (data.status === 200) {
+                                $("#notification").getKendoNotification().show(data.responseJSON.message, "info");
+                                classwisesubjectgrid.data("kendoGrid").dataSource.read();
+                            } else {
+                                $("#notification").getKendoNotification().show(data.statusText, "error");
+                            }
+                        },
+                    },
+
+                    parameterMap: function (data, type) {
+                        if (type === "create") {
+                            const formData = new FormData();
+                            formData.append("subjectId", data.subjectId.subjectId);
+                            formData.append("teacherId", data.teacherId.teacherId);
+                            formData.append("standard", data.standard);
+                            return formData;
+                        }
+
+                        if (type === "update") {
+                            const formData = new FormData();
+                            formData.append("subjectId", data.subjectId);
+                            formData.append("teacherId", data.teacherId);
+                            formData.append("standard", data.standard);
+                            formData.append("id", data.id)
+                            return formData;
+                        }
+
+                        if (type === "destroy") return data.id
+                    }
+                },
+                schema: {
+                    model: {
+                        id: "id",
+                        fields: {
+                            id: { editable: false, nullable: false }
+                        }
+                    }
+                },
+                pageSize: 10
+            },
+            columns: [
+                { field: "id", title: "Allotment ID" },
+                {
+                    field: "teacherId", title: "Teacher Name", template: (options) => options.teacherName, editor: function (container, options) {
+                        $(`<ul data-bind="value:teacherId"></ul>`).appendTo(container).kendoDropDownList({
+                            optionLabel: "-- Select Teacher --",
+                            dataTextField: "name",
+                            dataValueField: "teacherId",
+                            dataSource: {
+                                transport: {
+                                    read: {
+                                        url: `${apihost}/api/Admin/GetTeacherDetails`,
+                                        dataType: "json"
+                                    },
+                                },
+                                schema: {
+                                    data: function (data) {
+                                        return data.map(function (e) {
+                                            return {
+                                                teacherId: e.teacherId,
+                                                name: e.name
+                                            }
+                                        });
+                                    }
+                                }
+                            }
+                        });
+                    }
+                },
+                {
+                    field: "subjectId", title: "Subject Name", template: (options) => options.subjectName, editor: function (container, options) {
+                        $(`<ul data-bind="value:subjectId"></ul>`).appendTo(container).kendoDropDownList({
+                            optionLabel: "-- Select Subject --",
+                            dataValueField: "subjectId",
+                            dataTextField: "subjectName",
+                            dataSource: {
+                                transport: {
+                                    read: `${apihost}/api/Admin/GetSubjects`,
+                                }
+                            }
+                        });
+                    }
+                },
+                {
+                    field: "standard", title: "Standard", editor: function (container, options) {
+                        $(`<ul data-bind="value:standard"></ul>`).appendTo(container).kendoDropDownList({
+                            optionLabel: "-- Select Standard --",
+                            dataSource: {
+                                transport: {
+                                    read: `${apihost}/api/Admin/GetStandards`
+                                }
+                            },
+                        });
+                    }
+                },
+                { command: ["edit", "destroy"], title: "Action" }
+            ],
+            toolbar: ["create"],
+            height: 500,
+            editable: "popup",
+            sortable: true,
+            filterable: true,
+            pageable: true
+        });
+    </script>
+}

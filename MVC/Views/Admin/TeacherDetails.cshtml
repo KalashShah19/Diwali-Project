@@ -1,0 +1,132 @@
+@{
+    ViewData["title"] = "Admin: Teacher Details";
+}
+
+<h1 class="mb-3">Manage Teacher Details</h1>
+<span id="notification"></span>
+<div id="teacherGrid"></div>
+
+@section Scripts {
+    <script>
+        $("#notification").kendoNotification({
+            position: {
+                top: 30
+            }
+        });
+
+        const teacherGrid = $("#teacherGrid").kendoGrid({
+            dataSource: {
+                transport: {
+                    read: {
+                        url: `${apihost}/api/Admin/GetTeacherDetails`,
+                        dataType: "json",
+                        complete: function (data) {
+                            if (data.status === 200) {
+                                $("#notification").getKendoNotification().show("Teacher details fetched successfully", "info");
+                            } else {
+                                $("#notification").getKendoNotification().show(data.statusText, "error");
+                            }
+                        },
+                    },
+
+                    update: {
+                        url: `${apihost}/api/Admin/UpdateTeacherDetails`,
+                        dataType: "json",
+                        contentType: false,
+                        processData: false,
+                        method: "PUT",
+                        complete: function (data) {
+                            if (data.status === 200) {
+                                $("#notification").getKendoNotification().show(data.responseJSON.message, "info");
+                                teacherGrid.data("kendoGrid").dataSource.read();
+                            } else {
+                                $("#notification").getKendoNotification().show(data.statusText, "error");
+                            }
+                        },
+                    },
+
+                    parameterMap: function (data, type) {
+                        if (type === "update") {
+                            const formData = new FormData();
+                            formData.append("teacherId", data.teacherId);
+                            formData.append("qualification", "PhD");
+                            formData.append("standard", data.standard);
+                            formData.append("working", data.working);
+                            return formData;
+                        }
+                    }
+                },
+                schema: {
+                    model: {
+                        id: "teacherId",
+                        fields: {
+                            teacherId: { editable: false, nullable: false },
+                            image: { editable: false },
+                            name: { editable: false },
+                            email: { editable: false },
+                            gender: { editable: false },
+                            address: { editable: false },
+                            mobileNumber: { editable: false },
+                            birthDate: { editable: false },
+                            joiningDate: { editable: false }
+                        }
+                    }
+                },
+                pageSize: 10
+            },
+            columns: [
+                { field: "teacherId", title: "Teacher Id" },
+                {
+                    field: "image", title: "Image", template: function (data) {
+                        return `<img src='${apihost}/${data.image}' height=100 />`;
+                    }
+                },
+                { field: "name", title: "Name" },
+                {
+                    field: "standard", title: "Standard", template: (data) => data.standard ? data.standard : "None", editor: function (container, options) {
+                        $(`<ul data-bind="value:standard"></ul>`).appendTo(container).kendoDropDownList({
+                            optionLabel: "--Select Standard --",
+                            dataSource: {
+                                transport: {
+                                    read: `${apihost}/api/Admin/GetStandards`
+                                }
+                            }
+                        });
+                    }
+                },
+                { field: "email", title: "Email Address" },
+                { field: "mobileNumber", title: "Mobile Number" },
+                { field: "gender", title: "Gender" },
+                {
+                    field: "birthDate", title: "Date of Birth", template: function (data) {
+                        const miliseconds = Date.parse(data.birthDate);
+                        const date = new Date(miliseconds);
+                        return date.toDateString();
+                    }
+                },
+                { field: "address", title: "Address" },
+                {
+                    field: "joiningDate", title: "Joining Date", template: function (data) {
+                        const miliseconds = Date.parse(data.joiningDate);
+                        const date = new Date(miliseconds);
+                        return date.toDateString();
+                    }
+                },
+                {
+                    field: "working", title: "Working", template: (data) => (data.working) ? "Working" : "Not Working", editor: function (container, options) {
+                        $(`<input type="checkbox" data-bind="checked:working" />`).appendTo(container).kendoCheckBox({
+                            label: "Working",
+                        });
+                    }
+                },
+                { command: ["edit"], title: "Action" }
+            ],
+
+            editable: "popup",
+            height: 500,
+            sortable: true,
+            filterable: true,
+            pageable: true
+        });
+    </script>
+}

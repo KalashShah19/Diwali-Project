@@ -1,0 +1,124 @@
+@{
+    ViewData["title"] = "Admin: Manage Fee Structure";
+}
+
+<h1 class="mb-3">Manage Fee Structure</h1>
+<span id="notification"></span>
+<div id="feesstucturegrid"></div>
+
+@section Scripts {
+    <script>
+        $("#notification").kendoNotification({
+            position: {
+                top: 30
+            }
+        });
+        const feeStructureGrid = $("#feesstucturegrid").kendoGrid({
+            dataSource: {
+                transport: {
+                    read: {
+                        url: `${apihost}/api/Admin/GetFeeStructure`,
+                        dataType: "json",
+                        complete: function (data) {
+                            if (data.status === 200) {
+                                $("#notification").getKendoNotification().show("Fee Structure fetched successfully", "info");
+                            } else {
+                                $("#notification").getKendoNotification().show(data.statusText, "error");
+                            }
+                        },
+                    },
+                    create: {
+                        url: `${apihost}/api/Admin/AddFeeInfo`,
+                        method: "POST",
+                        contentType: false,
+                        processData: false,
+                        complete: function (data) {
+                            if (data.status === 200) {
+                                $("#notification").getKendoNotification().show(data.responseJSON.message, "info");
+                                feeStructureGrid.data("kendoGrid").dataSource.read();
+                            } else {
+                                $("#notification").getKendoNotification().show(data.statusText, "error");
+                            }
+                        },
+                    },
+
+                    update: {
+                        url: `${apihost}/api/Admin/UpdateFeeInfo`,
+                        method: "PATCH",
+                        contentType: false,
+                        processData: false,
+                        complete: function (data) {
+                            if (data.status === 200) {
+                                $("#notification").getKendoNotification().show(data.responseJSON.message, "info");
+                                feeStructureGrid.data("kendoGrid").dataSource.read();
+                            } else {
+                                $("#notification").getKendoNotification().show(data.statusText, "error");
+                            }
+                        },
+                    },
+
+                    destroy: {
+                        url: (data) => `${apihost}/api/Admin/RemoveFeeInfo?feeinfoid=${data.feesID}`,
+                        method: "DELETE",
+                        dataType: "json",
+                        complete: function (data) {
+                            if (data.status === 200) {
+                                $("#notification").getKendoNotification().show(data.responseJSON.message, "info");
+                                feeStructureGrid.data("kendoGrid").dataSource.read();
+                            } else {
+                                $("#notification").getKendoNotification().show(data.statusText, "error");
+                            }
+                        },
+                    },
+
+                    parameterMap: function (data, type) {
+                        if (type === "create" || type === "update") {
+                            const formData = new FormData();
+                            if (type === "update") formData.append("feesID", data.feesID);
+                            formData.append("standard", data.standard);
+                            formData.append("batchYear", data.batchYear);
+                            formData.append("amount", data.amount);
+                            return formData;
+                        }
+                    }
+                },
+                schema: {
+                    model: {
+                        id: "feesID",
+                        fields: {
+                            feesID: { editable: false, nullable: false }
+                        }
+                    }
+                },
+                pageSize: 10
+            },
+            columns: [
+                { field: "feesID", title: "Fees ID" },
+                {
+                    field: "standard", title: "Standard", editor: function (container, options) {
+                        $("<ul data-bind='value:standard'></ul>").appendTo(container).kendoDropDownList({
+                            optionLabel: "-- Select Standard --",
+                            dataSource: {
+                                transport: {
+                                    read: {
+                                        url: `${apihost}/api/Admin/GetStandards`,
+                                        dataType: "json"
+                                    }
+                                },
+                            }
+                        });
+                    }
+                },
+                { field: "batchYear", title: "Batch Year" },
+                { field: "amount", title: "Amount" },
+                { command: ["edit", "destroy"], title: "Action" }
+            ],
+            toolbar: ["create"],
+            height: 500,
+            editable: "popup",
+            sortable: true,
+            filterable: true,
+            pageable: true
+        });
+    </script>
+}

@@ -1,0 +1,131 @@
+@{
+    ViewData["title"] = "Admin: Student Details";
+}
+
+<h1 class="mb-3">Manage Student Details</h1>
+<span id="notification"></span>
+<div id="studentGrid"></div>
+
+@section Scripts {
+    <script>
+        $("#notification").kendoNotification({
+            position: {
+                top: 30
+            }
+        });
+
+        const studentGrid = $("#studentGrid").kendoGrid({
+            dataSource: {
+                transport: {
+                    read: {
+                        url: `${apihost}/api/Admin/GetStudentDetails`,
+                        dataType: "json",
+                        complete: function (data) {
+                            if (data.status === 200) {
+                                $("#notification").getKendoNotification().show("Student details fetched successfully", "info");
+                            } else {
+                                $("#notification").getKendoNotification().show(data.statusText, "error");
+                            }
+                        },
+                    },
+
+                    update: {
+                        url: `${apihost}/api/Admin/UpdateStudentDetails`,
+                        dataType: "json",
+                        contentType: false,
+                        processData: false,
+                        method: "PUT",
+                        complete: function (data) {
+                            if (data.status === 200) {
+                                $("#notification").getKendoNotification().show(data.responseJSON.message, "info");
+                                studentGrid.data("kendoGrid").dataSource.read();
+                            } else {
+                                $("#notification").getKendoNotification().show(data.statusText, "error");
+                            }
+                        },
+                    },
+
+
+                    parameterMap: function (data, type) {
+                        if (type === "update") {
+                            const formData = new FormData();
+                            formData.append("enrollmentNumber", data.enrollmentNumber);
+                            formData.append("standard", data.standard);
+                            formData.append("studying", data.studying);
+                            return formData;
+                        }
+                    }
+                },
+                schema: {
+                    model: {
+                        id: "enrollmentNumber",
+                        fields: {
+                            enrollmentNumber: { editable: false, nullable: false },
+                            image: { editable: false },
+                            name: { editable: false },
+                            email: { editable: false },
+                            gender: { editable: false },
+                            address: { editable: false },
+                            mobileNumber: { editable: false },
+                            birthDate: { editable: false },
+                            admissionDate: { editable: false }
+                        }
+                    }
+                },
+                pageSize: 10
+            },
+            columns: [
+                { field: "enrollmentNumber", title: "Enrollment Number" },
+                {
+                    field: "image", title: "Image", template: function (data) {
+                        return `<img src='${apihost}/${data.image}' height=100 />`;
+                    }
+                },
+                { field: "name", title: "Name" },
+                {
+                    field: "standard", title: "Standard", editor: function (container, options) {
+                        $(`<ul data-bind="value:standard"></ul>`).appendTo(container).kendoDropDownList({
+                            optionLabel: "--Select Standard --",
+                            dataSource: {
+                                transport: {
+                                    read: `${apihost}/api/Admin/GetStandards`
+                                }
+                            }
+                        });
+                    }
+                },
+                { field: "email", title: "Email Address" },
+                { field: "mobileNumber", title: "Mobile Number" },
+                { field: "gender", title: "Gender" },
+                {
+                    field: "birthDate", title: "Date of Birth", template: function (data) {
+                        const miliseconds = Date.parse(data.birthDate);
+                        const date = new Date(miliseconds);
+                        return date.toDateString();
+                    }
+                },
+                { field: "address", title: "Address" },
+                {
+                    field: "admissionDate", title: "Admission Date", template: function (data) {
+                        const miliseconds = Date.parse(data.admissionDate);
+                        const date = new Date(miliseconds);
+                        return date.toDateString();
+                    }
+                },
+                {
+                    field: "studying", title: "Studying", template: (data) => (data.studying) ? "Studying" : "Not Studying", editor: function (container, options) {
+                        $(`<input type="checkbox" data-bind="checked:studying" />`).appendTo(container).kendoCheckBox({
+                            label: "Studying",
+                        });
+                    }
+                },
+                { command: ["edit"], title: "Action" }
+            ],
+            editable: "popup",
+            height: 500,
+            sortable: true,
+            filterable: true,
+            pageable: true
+        });
+    </script>
+}

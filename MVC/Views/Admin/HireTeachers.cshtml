@@ -1,0 +1,129 @@
+@{
+    ViewData["title"] = "Admin: Hire Teachers";
+}
+
+<h1 class="mb-3">Hire Teachers</h1>
+<span id="notification"></span>
+<div id="hireteacherGrid"></div>
+
+@section Scripts {
+    <script>
+        $("#notification").kendoNotification({
+            position: {
+                top: 30
+            }
+        });
+
+        const hireteacherGrid = $("#hireteacherGrid").kendoGrid({
+            dataSource: {
+                transport: {
+                    read: {
+                        url: `${apihost}/api/Admin/GetJobRequests`,
+                        dataType: "json",
+                        complete: function (data) {
+                            if (data.status === 200) {
+                                $("#notification").getKendoNotification().show("Job requests fetched successfully", "info");
+                            } else {
+                                $("#notification").getKendoNotification().show(data.statusText, "error");
+                            }
+                        },
+                    },
+
+                    update: {
+                        url: `${apihost}/api/Admin/HireTeacher`,
+                        dataType: "json",
+                        processData: false,
+                        contentType: false,
+                        method: "POST",
+                        complete: function (data) {
+                            if (data.status === 200) {
+                                $("#notification").getKendoNotification().show(data.responseJSON.message, "info");
+                                hireteacherGrid.data("kendoGrid").dataSource.read();
+                            } else {
+                                $("#notification").getKendoNotification().show(data.statusText, "error");
+                            }
+                        },
+                    },
+                    destroy: {
+                        url: (data) => `${apihost}/api/Admin/RejectCandidate?id=${data.userId}`,
+                        method: "DELETE",
+                        complete: function (data) {
+                            if (data.status === 200) {
+                                $("#notification").getKendoNotification().show(data.responseJSON.message, "info");
+                                hireteacherGrid.data("kendoGrid").dataSource.read();
+                            } else {
+                                $("#notification").getKendoNotification().show(data.statusText, "error");
+                            }
+                        },
+                    },
+                    parameterMap: function (data, type) {
+                        if (type === "update") {
+                            const formData = new FormData();
+                            formData.append("userId", data.userId);
+                            formData.append("qualification", "PhD");
+                            formData.append("standard", data.standard);
+                            return formData;
+                        }
+
+                        if (type === "destroy") return data.userId;
+                    }
+                },
+                schema: {
+                    model: {
+                        id: "userId",
+                        fields: {
+                            userId: { editable: false, nullable: false },
+                            image: { editable: false },
+                            name: { editable: false },
+                            email: { editable: false },
+                            birthDate: { editable: false },
+                            gender: { editable: false },
+                            mobileNumber: { editable: false },
+                        }
+                    }
+                },
+                pageSize: 10
+            },
+            columns: [
+                { field: "userId", title: "Candidate ID" },
+                {
+                    field: "image", title: "Image", template: function (data) {
+                        return `<img src='${apihost}/${data.image}' height=100 />`;
+                    }
+                },
+                { field: "name", title: "Name" },
+                { field: "email", title: "Email Address" },
+                { field: "mobileNumber", title: "Contact Number" },
+                {
+                    field: "birthDate", title: "Date of Birth", template: function (data) {
+                        const miliseconds = Date.parse(data.birthDate);
+                        const date = new Date(miliseconds);
+                        return date.toDateString();
+                    }
+                },
+                { field: "gender", title: "Gender" },
+                {
+                    field: "address", title: "Address", editor: function (container, options) {
+                        $("#address-form-label").hide();
+                        $(`<ul data-bind="value:standard"></ul>`).appendTo(container).kendoDropDownList({
+                            optionLabel: "-- Select Standard -- ",
+                            label: "Standard", dataSource: {
+                                transport: {
+                                    read: `${apihost}/api/Admin/GetStandards`
+                                }
+                            }
+                        });
+                    }
+                },
+                {
+                    command: [{ name: "edit", text: "Hire" }, "destroy"], title: "Action"
+                }
+            ],
+            editable: "popup",
+            height: 500,
+            sortable: true,
+            filterable: true,
+            pageable: true
+        });
+    </script>
+}

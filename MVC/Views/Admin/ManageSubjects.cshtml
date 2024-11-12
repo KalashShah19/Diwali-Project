@@ -1,0 +1,81 @@
+@{
+    ViewData["title"] = "Admin: Manage Subjects";
+}
+
+<h1 class="mb-3">Manage Subjects</h1>
+<span id="notification"></span>
+<div id="subjectsgrid"></div>
+
+@section Scripts {
+    <script>
+        $("#notification").kendoNotification({
+            position: {
+                top: 30
+            }
+        });
+        const subjectsGrid = $("#subjectsgrid").kendoGrid({
+            dataSource: {
+                transport: {
+                    read: {
+                        url: `${apihost}/api/Admin/GetSubjects`,
+                        dataType: "json",
+                        complete: function (data) {
+                            if (data.status === 200) {
+                                $("#notification").getKendoNotification().show("Subjects fetched successfully", "info");
+                            } else {
+                                $("#notification").getKendoNotification().show(data.statusText, "error");
+                            }
+                        },
+                    },
+                    create: {
+                        url: (data) => `${apihost}/api/Admin/AddSubject?subjectname=${data.subjectName}`,
+                        method: "POST",
+                        complete: function (data) {
+                            if (data.status === 200) {
+                                console.log(data);
+                                $("#notification").getKendoNotification().show(data.responseJSON.message, "info");
+                                subjectsGrid.data("kendoGrid").dataSource.read();
+                            } else {
+                                $("#notification").getKendoNotification().show(data.statusText, "error");
+                            }
+                        },
+                    },
+
+                    destroy: {
+                        url: (data) => `${apihost}/api/Admin/RemoveSubject?subjectid=${data.subjectId}`,
+                        method: "DELETE",
+                        dataType: "json",
+                        complete: function (data) {
+                            if (data.status === 200) {
+                                $("#notification").getKendoNotification().show(data.responseJSON.message, "info");
+                                subjectsGrid.data("kendoGrid").dataSource.read();
+                            } else {
+                                $("#notification").getKendoNotification().show(data.statusText, "error");
+                            }
+                        },
+                    }
+                },
+                schema: {
+                    model: {
+                        id: "subjectId",
+                        fields: {
+                            subjectId: { editable: false, nullable: false }
+                        }
+                    }
+                },
+                pageSize: 10
+            },
+            columns: [
+                { field: "subjectId", title: "Subject ID" },
+                { field: "subjectName", title: "Subject Name" },
+                { command: ["destroy"], title: "Action" }
+            ],
+            toolbar: ["create"],
+            height: 500,
+            editable: "popup",
+            sortable: true,
+            filterable: true,
+            pageable: true
+        });
+    </script>
+}
