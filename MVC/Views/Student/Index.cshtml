@@ -1,0 +1,478 @@
+@* <h3>Index page</h3>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Feedback Display</title>
+<link rel="stylesheet" href="https://kendo.cdn.telerik.com/2022.1.301/styles/kendo.default-v2.min.css" />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://kendo.cdn.telerik.com/2022.1.301/js/kendo.all.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+</head>
+
+<body>
+<div class="container mt-5">
+<h6 class="text-center mb-4">Feedback List</h6>
+
+<!-- Kendo Grid -->
+<div id="feedbackGrid"></div>
+</div>
+
+<script>
+$(document).ready(function () {
+
+var feedbackData = [
+{
+"teacherId": 2,
+"rating": 9,
+"comment": "Good Teacher",
+"batchYear": "2024",
+"feedbackDate": "2024-11-04T00:00:00"
+},
+{
+"teacherId": 2,
+"rating": 7,
+"comment": "good",
+"batchYear": "2024",
+"feedbackDate": "2024-11-04T00:00:00"
+},
+{
+"teacherId": 1,
+"rating": 5,
+"comment": "Bad Teacher",
+"batchYear": "2024",
+"feedbackDate": "2024-11-04T00:00:00"
+}
+];
+
+
+$("#feedbackGrid").kendoGrid({
+dataSource: {
+data: feedbackData,
+schema: {
+model: {
+fields: {
+teacherId: { type: "number" },
+rating: { type: "number" },
+comment: { type: "string" },
+batchYear: { type: "string" },
+feedbackDate: { type: "date" }
+}
+}
+},
+pageSize: 10
+},
+height: 350,
+sortable: true,
+pageable: true,
+filterable: true,
+columns: [
+{ field: "teacherId", title: "Teacher ID", width: "100px", attributes: { class: "text-center" } },
+{ field: "rating", title: "Rating", width: "100px", attributes: { class: "text-center" } },
+{ field: "comment", title: "Comment", width: "200px" },
+{ field: "batchYear", title: "Batch Year", width: "100px", attributes: { class: "text-center" } },
+{
+field: "feedbackDate",
+title: "Feedback Date",
+width: "150px",
+format: "{0:yyyy-MM-dd}",
+attributes: { class: "text-center" }
+}
+],
+dataBound: function () {
+// Apply Bootstrap table classes for styling
+this.element.addClass("table table-bordered table-hover");
+}
+});
+});
+</script>
+</body>
+
+</html>
+*@
+
+@{
+    Layout = "_Layout2";
+}
+
+
+
+
+<h1>Hello</h1>
+
+<link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.2.616/styles/kendo.common.min.css" />
+<link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.2.616/styles/kendo.default.min.css" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://kendo.cdn.telerik.com/2021.2.616/js/kendo.all.min.js"></script>
+
+<div id="grid"></div>
+
+<script>
+    $(document).ready(function () {
+        var sessionId = "@ViewBag.UserID2";
+        console.log(sessionId);
+        var dataSource = new kendo.data.DataSource({
+            transport: {
+                read: {
+                    url: "http://localhost:5064/api/StudentFeedback/GetStdFeedback?id=" + sessionId,
+                    type: "POST",
+                    dataType: "json"
+                }
+            },
+            pageSize: 10,
+            schema: {
+                model: {
+                    fields: {
+                        teacherId: { type: "number", editable: false, nullable: false },
+                        rating: { type: "number", validation: { required: true } },
+                        comment: { type: "string", validation: { required: true } },
+                        batchYear: { type: "string", validation: { required: true } },
+                        feedbackDate: { type: "date", validation: { required: true } }
+                    }
+                }
+            }
+        });
+
+        $("#grid").kendoGrid({
+            dataSource: dataSource,
+            columns: [
+                { field: "teacherId", title: "Intern ID" },
+                { field: "rating", title: "Intern Name" },
+                {
+                    field: "comment",
+                    title: "Gender"
+                },
+                {
+                    field: "BatchYear",
+                    title: "Topic ID"
+                },
+                {
+                    field: "feedbackDate",
+                    title: "FeedbackDate",
+                    format: "{0:MM/dd/yyyy}"
+                }
+            ],
+            pageable: true,
+            sortable: true,
+            filterable: true
+        });
+
+        dataSource.bind("requestEnd", function (e) {
+            if (e.type === "create" || e.type === "update" || e.type === "destroy") {
+                dataSource.read();
+            }
+        });
+
+        $("#grid").on("click", ".k-grid-cancel-changes", function () {
+            dataSource.cancelChanges();
+        });
+    });
+</script>
+
+@* <ul id="panelbar">
+<li>Item 1
+<ul>
+<li>Sub Item 1</li>
+<li>Sub Item 2</li>
+<li>Sub Item 3</li>
+</ul>
+</li>
+<li>Item 2
+<ul>
+<li>Sub Item 1</li>
+<li>Sub Item 2</li>
+<li>Sub Item 3</li>
+</ul>
+</li>
+</ul>
+<script>
+$("#panelbar").kendoPanelBar({
+animation: {
+expand: {
+duration: 200,
+effects: "expandVertical"
+}
+}
+});
+</script>
+*@
+
+@* <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Student Management Dashboard</title>
+<link rel="stylesheet" href="https://kendo.cdn.telerik.com/2023.1.223/styles/kendo.default-v2.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://kendo.cdn.telerik.com/2023.1.223/js/kendo.all.min.js"></script>
+<style>
+/* Navbar styling */
+#navbar {
+position: sticky;
+top: 0;
+width: 100%;
+height: 60px;
+background-color: #3f51b5;
+color: white;
+display: flex;
+align-items: center;
+padding: 0 20px;
+box-sizing: border-box;
+z-index: 1000;
+}
+
+#navbar h1 {
+font-size: 20px;
+color: #FFD700;
+margin-right: auto;
+}
+
+.navbar-toggle {
+cursor: pointer;
+font-size: 24px;
+margin-right: 20px;
+}
+
+/* Search bar styling */
+.navbar-search {
+flex: 1;
+max-width: 300px;
+margin-right: 20px;
+}
+
+.navbar-search input {
+width: 100%;
+padding: 5px 10px;
+border-radius: 4px;
+border: none;
+font-size: 14px;
+}
+
+.notification-icon {
+font-size: 20px;
+cursor: pointer;
+margin-right: 20px;
+}
+
+/* Layout styling */
+#wrapper {
+display: flex;
+height: calc(100vh - 60px);
+overflow: hidden;
+}
+
+/* Sidebar styling */
+#sidebar {
+width: 200px;
+background-color: #fff;
+color: #333;
+padding: 20px 0;
+box-sizing: border-box;
+border-right: 1px solid #ddd;
+display: flex;
+flex-direction: column;
+align-items: center;
+transition: width 0.3s;
+}
+
+#sidebar.collapsed {
+display: none;
+}
+
+/* Sidebar profile styling */
+#profile {
+text-align: center;
+margin-bottom: 20px;
+}
+
+#profile img {
+width: 80px;
+height: 80px;
+border-radius: 50%;
+margin-bottom: 10px;
+}
+
+#profile p {
+margin: 0;
+font-size: 14px;
+color: #666;
+}
+
+/* Sidebar menu styling */
+#sidebar ul {
+list-style: none;
+padding: 0;
+width: 100%;
+text-align: center;
+}
+
+#sidebar ul li {
+padding: 15px;
+cursor: pointer;
+font-size: 16px;
+color: #333;
+border-bottom: 1px solid #ddd;
+display: flex;
+align-items: center;
+}
+
+#sidebar ul li:hover {
+background-color: #f0f0f0;
+}
+
+#sidebar ul li i {
+margin-right: 10px;
+}
+
+/* Main content styling */
+#mainContent {
+flex: 1;
+padding: 20px;
+background-color: #f5f5f5;
+overflow-y: auto;
+transition: margin-left 0.3s;
+}
+
+/* Section styling */
+.section {
+padding: 20px;
+background-color: #ffffff;
+margin-bottom: 20px;
+border-radius: 5px;
+}
+</style>
+</head>
+<body>
+
+<!-- Top Navigation Bar -->
+<div id="navbar">
+<span class="navbar-toggle k-icon k-i-menu" id="toggleSidebar"></span>
+<h1>My School</h1>
+
+<!-- Search bar inside the navbar -->
+<div class="navbar-search">
+<input type="text" placeholder="Search..." />
+</div>
+
+<span class="notification-icon k-icon k-i-bell"></span>
+</div>
+
+<div id="wrapper">
+<!-- Side Navigation Menu -->
+<div id="sidebar">
+<!-- Profile Section -->
+<div id="profile">
+<img src="https://via.placeholder.com/80" alt="Student Photo">
+<p>Alice Johnson</p>
+<p>alice.johnson@example.com</p>
+</div>
+<ul id="menu">
+<li data-target="#studentProfileSection"><i class="k-icon k-i-user"></i>Student Profile</li>
+<li data-target="#studentInfoSection"><i class="k-icon k-i-grid"></i>Student Info</li>
+<li data-target="#gradeDistributionSection"><i class="k-icon k-i-chart-pie"></i>Grade Distribution</li>
+</ul>
+</div>
+
+<!-- Main Content Area -->
+<div id="mainContent">
+<!-- Student Profile Section -->
+<div id="studentProfileSection" class="section">
+<h2>Student Profile</h2>
+<div>
+<p><strong>Name:</strong> Alice Johnson</p>
+<p><strong>Age:</strong> 20</p>
+<p><strong>Email:</strong> alice.johnson@example.com</p>
+</div>
+</div>
+
+<!-- Student Info Section -->
+<div id="studentInfoSection" class="section">
+<h2>Student Info</h2>
+<div id="studentGrid"></div>
+</div>
+
+<!-- Grade Distribution Section -->
+<div id="gradeDistributionSection" class="section">
+<h2>Grade Distribution</h2>
+<div id="gradeChart"></div>
+</div>
+</div>
+</div>
+
+<script>
+$(document).ready(function () {
+// Sidebar toggle functionality
+$('#toggleSidebar').click(function () {
+$('#sidebar').toggleClass('collapsed');
+$('#mainContent').css('flex', $('#sidebar').hasClass('collapsed') ? '2' : '1');
+});
+
+// Sidebar menu click event to scroll to sections
+$("#menu li").click(function () {
+const targetSection = $($(this).data("target"));
+$("html, body").animate({
+scrollTop: targetSection.offset().top - 60
+}, 500);
+});
+
+// Sample student data for the grid
+const students = [
+{ id: 1, name: "Alice Johnson", age: 20, grade: "A" },
+{ id: 2, name: "Bob Smith", age: 21, grade: "B" },
+{ id: 3, name: "Charlie Brown", age: 19, grade: "C" },
+{ id: 4, name: "David Williams", age: 22, grade: "A" },
+{ id: 5, name: "Eve Johnson", age: 20, grade: "B" }
+];
+
+// Initialize the Kendo Grid for student info
+$("#studentGrid").kendoGrid({
+dataSource: {
+data: students,
+pageSize: 5
+},
+pageable: true,
+columns: [
+{ field: "id", title: "ID", width: "50px" },
+{ field: "name", title: "Name", width: "150px" },
+{ field: "age", title: "Age", width: "100px" },
+{ field: "grade", title: "Grade", width: "100px" }
+]
+});
+
+// Data for grade distribution chart
+const gradeData = [
+{ grade: "A", count: 2 },
+{ grade: "B", count: 2 },
+{ grade: "C", count: 1 }
+];
+
+// Initialize the Kendo Chart for grade distribution
+$("#gradeChart").kendoChart({
+title: {
+text: "Grade Distribution"
+},
+legend: {
+position: "bottom"
+},
+series: [{
+type: "pie",
+data: gradeData,
+field: "count",
+categoryField: "grade",
+labels: {
+visible: true,
+format: "{0} - {1}%"
+}
+}],
+tooltip: {
+visible: true,
+format: "{0} - {1}%"
+}
+});
+});
+</script>
+</body>
+</html> *@

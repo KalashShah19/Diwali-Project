@@ -1,0 +1,207 @@
+@{
+    ViewData["Title"] = "Student Management Dashboard";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2023.1.223/styles/kendo.default-v2.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2023.1.223/js/kendo.all.min.js"></script>
+    <style>
+        /* Navbar styling */
+        #navbar {
+            position: sticky;
+            top: 0;
+            width: 100%;
+            height: 60px;
+            background-color: #3f51b5;
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            box-sizing: border-box;
+            z-index: 1000;
+        }
+
+        #navbar h1 {
+            font-size: 20px;
+            color: #FFD700;
+            margin-right: auto;
+        }
+
+        .navbar-toggle {
+            cursor: pointer;
+            font-size: 24px;
+            margin-right: 20px;
+        }
+
+        /* Search bar styling */
+        .navbar-search {
+            flex: 1;
+            max-width: 300px;
+            margin-right: 20px;
+        }
+
+        .navbar-search input {
+            width: 100%;
+            padding: 5px 10px;
+            border-radius: 4px;
+            border: none;
+            font-size: 14px;
+        }
+
+        .notification-icon {
+            font-size: 20px;
+            cursor: pointer;
+            margin-right: 20px;
+        }
+
+        /* Layout styling */
+        #wrapper {
+            display: flex;
+            height: calc(100vh - 60px);
+            overflow: hidden;
+        }
+
+        /* Sidebar styling */
+        #sidebar {
+            width: 200px;
+            background-color: #fff;
+            color: #333;
+            padding: 20px 0;
+            box-sizing: border-box;
+            border-right: 1px solid #ddd;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: width 0.3s;
+        }
+
+        #sidebar.collapsed {
+            display: none;
+        }
+
+        /* Sidebar profile styling */
+        #profile {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #profile img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+
+        #profile p {
+            margin: 0;
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* Sidebar menu styling */
+        #sidebar ul {
+            list-style: none;
+            padding: 0;
+            width: 100%;
+            text-align: center;
+        }
+
+        #sidebar ul li {
+            padding: 15px;
+            cursor: pointer;
+            font-size: 16px;
+            color: #333;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+        }
+
+        #sidebar ul li:hover {
+            background-color: #f0f0f0;
+        }
+
+        #sidebar ul li i {
+            margin-right: 10px;
+        }
+
+        /* Main content styling */
+        #mainContent {
+            flex: 1;
+            padding: 20px;
+            background-color: #f5f5f5;
+            overflow-y: auto;
+            transition: margin-left 0.3s;
+        }
+
+        /* Section styling */
+        .section {
+            padding: 20px;
+            background-color: #ffffff;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Top Navigation Bar -->
+    <div id="navbar">
+        <span class="navbar-toggle k-icon k-i-menu" id="toggleSidebar"></span>
+        <h1>My School</h1>
+
+        <!-- Search bar inside the navbar -->
+        <div class="navbar-search">
+            <input type="text" placeholder="Search..." />
+        </div>
+
+        <span class="notification-icon k-icon k-i-bell"></span>
+    </div>
+
+    <div id="wrapper">
+        <!-- Side Navigation Menu -->
+        <div id="sidebar">
+            <!-- Profile Section -->
+            <div id="profile">
+                <img src="https://via.placeholder.com/80" alt="Student Photo">
+                <p>@User.Identity.Name</p> <!-- Display logged-in user -->
+                <p>alice.johnson@example.com</p>
+            </div>
+            <ul id="menu">
+                <li data-target="#studentProfileSection"><i class="k-icon k-i-user"></i>Student Profile</li>
+                <li data-target="#studentInfoSection"><i class="k-icon k-i-grid"></i>Student Info</li>
+            </ul>
+        </div>
+
+        <!-- Main Content Area -->
+        <div id="mainContent">
+            @RenderBody() <!-- The content from specific views will be rendered here -->
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            // Sidebar toggle functionality
+            $('#toggleSidebar').click(function () {
+                $('#sidebar').toggleClass('collapsed');
+                $('#mainContent').css('flex', $('#sidebar').hasClass('collapsed') ? '2' : '1');
+            });
+
+            // Sidebar menu click event to scroll to sections
+            $("#menu li").click(function () {
+                const targetSection = $($(this).data("target"));
+                $("html, body").animate({
+                    scrollTop: targetSection.offset().top - 60
+                }, 500);
+            });
+        });
+    </script>
+</body>
+
+</html>
