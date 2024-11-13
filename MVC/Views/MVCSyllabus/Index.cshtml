@@ -1,6 +1,6 @@
 <div id="gantt"></div>
 
-@section Scripts {
+@section scripts {
     <script>
         $(document).ready(function () {
             $.ajax({
@@ -10,11 +10,12 @@
                 success: function (data) {
                     $("#gantt").kendoGantt({
                         dataSource: {
-                            data: data
+                            data: data,
                         },
-                        views: ["day", "week", {type:"month", selected:true}, "year"],
+                        views: ["day", "week", { type: "month", selected: true }, "year"],
                         columns: [
-                            { field: "chapterName", title: "Chapters" }
+                            { field: "title", title: "Chapters" },
+                            { field: "done", title: "Done %" }
                         ]
                     });
                 }

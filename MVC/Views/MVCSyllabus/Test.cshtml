@@ -1,0 +1,102 @@
+<div id="subjectDropdown"></div>
+<div id="standardDropdown"></div>
+
+<div id="gantt"></div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $("#gantt").kendoGantt({
+                dataSource: {
+                    transport: {
+                        read: {
+                            url: "/MVCSyllabus/GetSyllabusData",
+                            type: "GET",
+                            dataType: "json"
+                        },
+                        create: {
+                            url: "/MVCSyllabus/CreateSyllabus",
+                            type: "POST",
+                            dataType: "json",
+                            complete: function (response) {
+                                $("#gantt").data("kendoGantt").dataSource.read();
+                                console.log(response)
+                            }
+                        },
+                        update: {
+                            url: "/MVCSyllabus/UpdateSyllabus",
+                            type: "POST",
+                            dataType: "json",
+                            complete: function (response) {
+                                console.log(response)
+                            }
+                        },
+                        destroy: {
+                            url: "/MVCSyllabus/DeleteSyllabus",
+                            type: "DELETE",
+                            complete: function (response) {
+                                $("#gantt").data("kendoGantt").dataSource.read();
+                                console.log(response)
+                            }
+                        }
+                    },
+                },
+                schema: {
+                    model: {
+                        id: "syllabusID",
+                        fields: {
+                            start: { type: "date" },
+                            end: { type: "date" }
+                        }
+                    }
+                },
+                editable: true,
+                views: ["day", "week", { type: "month", selected: true }, "year"],
+                columns: [
+                    { field: "title", title: "Chapters" },
+                    { field: "done", title: "Done %" }
+                ],
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $("#subjectDropdown").kendoDropDownList({
+                dataSource: {
+                    transport: {
+                        read: {
+                            url: "/MVCSyllabus/GetSubjects", 
+                            dataType: "json"
+                        }
+                    }
+                },
+                dataTextField: "name",
+                dataValueField: "id",
+                optionLabel: "Select Subject...",
+                filter: "contains",
+                height: 300
+            });
+        });
+    </script>
+    
+    <script>
+        $(document).ready(function () {
+            $("#standardDropdown").kendoDropDownList({
+                dataSource: {
+                    transport: {
+                        read: {
+                            url: "/MVCSyllabus/GetStandards", 
+                            dataType: "json"
+                        }
+                    }
+                },
+                dataTextField: "standard",
+                dataValueField: "standard",
+                optionLabel: "Select Standard...",
+                filter: "contains",
+                height: 300
+            });
+        });
+    </script>
+}

@@ -20,13 +20,13 @@ Student
     AdmissionDate
     studying
 
-Teacher
-    userID
-    teacherId
-    Education
-    standard
-    working
-    joiningDate
+t_Teacher
+    c_userID
+    c_teacherId   
+    c_Education
+    c_standard
+    c_working
+    c_joiningDate
 
 Material
     materialID
@@ -70,12 +70,12 @@ Fees
     Year
     standardID
 
-Syllabus
+t_Syllabus
     c_CWSID
     c_chapterName
     c_start timestamp
     c_end timestamp
-    c_status
+    c_completed
 
 SchoolInfo 
     Name (Not Database)
