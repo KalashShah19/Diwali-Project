@@ -34,3 +34,39 @@ C:\Users\intern035\Downloads\Diwali-Project-main\Diwali-Project-main\WebAPI\obj\
 C:\Users\intern035\Downloads\Diwali-Project-main\Diwali-Project-main\WebAPI\obj\Debug\net8.0\WebAPI.pdb
 C:\Users\intern035\Downloads\Diwali-Project-main\Diwali-Project-main\WebAPI\obj\Debug\net8.0\WebAPI.genruntimeconfig.cache
 C:\Users\intern035\Downloads\Diwali-Project-main\Diwali-Project-main\WebAPI\obj\Debug\net8.0\ref\WebAPI.dll
+F:\! kalash\Diwali-Project\WebAPI\bin\Debug\net8.0\appsettings.Development.json
+F:\! kalash\Diwali-Project\WebAPI\bin\Debug\net8.0\appsettings.json
+F:\! kalash\Diwali-Project\WebAPI\bin\Debug\net8.0\WebAPI.staticwebassets.runtime.json
+F:\! kalash\Diwali-Project\WebAPI\bin\Debug\net8.0\WebAPI.exe
+F:\! kalash\Diwali-Project\WebAPI\bin\Debug\net8.0\WebAPI.deps.json
+F:\! kalash\Diwali-Project\WebAPI\bin\Debug\net8.0\WebAPI.runtimeconfig.json
+F:\! kalash\Diwali-Project\WebAPI\bin\Debug\net8.0\WebAPI.dll
+F:\! kalash\Diwali-Project\WebAPI\bin\Debug\net8.0\WebAPI.pdb
+F:\! kalash\Diwali-Project\WebAPI\bin\Debug\net8.0\Microsoft.AspNetCore.OpenApi.dll
+F:\! kalash\Diwali-Project\WebAPI\bin\Debug\net8.0\Microsoft.OpenApi.dll
+F:\! kalash\Diwali-Project\WebAPI\bin\Debug\net8.0\Npgsql.dll
+F:\! kalash\Diwali-Project\WebAPI\bin\Debug\net8.0\Swashbuckle.AspNetCore.Swagger.dll
+F:\! kalash\Diwali-Project\WebAPI\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+F:\! kalash\Diwali-Project\WebAPI\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+F:\! kalash\Diwali-Project\WebAPI\bin\Debug\net8.0\System.Security.Permissions.dll
+F:\! kalash\Diwali-Project\WebAPI\obj\Debug\net8.0\WebAPI.csproj.AssemblyReference.cache
+F:\! kalash\Diwali-Project\WebAPI\obj\Debug\net8.0\WebAPI.GeneratedMSBuildEditorConfig.editorconfig
+F:\! kalash\Diwali-Project\WebAPI\obj\Debug\net8.0\WebAPI.AssemblyInfoInputs.cache
+F:\! kalash\Diwali-Project\WebAPI\obj\Debug\net8.0\WebAPI.AssemblyInfo.cs
+F:\! kalash\Diwali-Project\WebAPI\obj\Debug\net8.0\WebAPI.csproj.CoreCompileInputs.cache
+F:\! kalash\Diwali-Project\WebAPI\obj\Debug\net8.0\WebAPI.MvcApplicationPartsAssemblyInfo.cs
+F:\! kalash\Diwali-Project\WebAPI\obj\Debug\net8.0\WebAPI.MvcApplicationPartsAssemblyInfo.cache
+F:\! kalash\Diwali-Project\WebAPI\obj\Debug\net8.0\staticwebassets.build.json
+F:\! kalash\Diwali-Project\WebAPI\obj\Debug\net8.0\staticwebassets.development.json
+F:\! kalash\Diwali-Project\WebAPI\obj\Debug\net8.0\staticwebassets\msbuild.WebAPI.Microsoft.AspNetCore.StaticWebAssets.props
+F:\! kalash\Diwali-Project\WebAPI\obj\Debug\net8.0\staticwebassets\msbuild.build.WebAPI.props
+F:\! kalash\Diwali-Project\WebAPI\obj\Debug\net8.0\staticwebassets\msbuild.buildMultiTargeting.WebAPI.props
+F:\! kalash\Diwali-Project\WebAPI\obj\Debug\net8.0\staticwebassets\msbuild.buildTransitive.WebAPI.props
+F:\! kalash\Diwali-Project\WebAPI\obj\Debug\net8.0\staticwebassets.pack.json
+F:\! kalash\Diwali-Project\WebAPI\obj\Debug\net8.0\scopedcss\bundle\WebAPI.styles.css
+F:\! kalash\Diwali-Project\WebAPI\obj\Debug\net8.0\WebAPI.csproj.Up2Date
+F:\! kalash\Diwali-Project\WebAPI\obj\Debug\net8.0\WebAPI.dll
+F:\! kalash\Diwali-Project\WebAPI\obj\Debug\net8.0\refint\WebAPI.dll
+F:\! kalash\Diwali-Project\WebAPI\obj\Debug\net8.0\WebAPI.pdb
+F:\! kalash\Diwali-Project\WebAPI\obj\Debug\net8.0\WebAPI.genruntimeconfig.cache
+F:\! kalash\Diwali-Project\WebAPI\obj\Debug\net8.0\ref\WebAPI.dll

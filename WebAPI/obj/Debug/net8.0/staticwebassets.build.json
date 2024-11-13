@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "vWtgS9rDC+Br9zT9WGO4Bgm9slj/Dwt6smoRissBQZ4=",
+  "Hash": "CYdKKkG/gB/DQcfpiJqE6T5+oVc8LbJG5g+V6YzUTjo=",
   "Source": "WebAPI",
   "BasePath": "_content/WebAPI",
   "Mode": "Default",
@@ -10,17 +10,17 @@
     {
       "Name": "WebAPI\\wwwroot",
       "Source": "WebAPI",
-      "ContentRoot": "C:\\Users\\intern035\\Downloads\\Diwali-Project-main\\Diwali-Project-main\\WebAPI\\wwwroot\\",
+      "ContentRoot": "F:\\! kalash\\Diwali-Project\\WebAPI\\wwwroot\\",
       "BasePath": "_content/WebAPI",
       "Pattern": "**"
     }
   ],
   "Assets": [
     {
-      "Identity": "C:\\Users\\intern035\\Downloads\\Diwali-Project-main\\Diwali-Project-main\\WebAPI\\wwwroot\\SchoolData\\principal.png",
+      "Identity": "F:\\! kalash\\Diwali-Project\\WebAPI\\wwwroot\\SchoolData\\principal.png",
       "SourceId": "WebAPI",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\intern035\\Downloads\\Diwali-Project-main\\Diwali-Project-main\\WebAPI\\wwwroot\\",
+      "ContentRoot": "F:\\! kalash\\Diwali-Project\\WebAPI\\wwwroot\\",
       "BasePath": "_content/WebAPI",
       "RelativePath": "SchoolData/principal.png",
       "AssetKind": "All",

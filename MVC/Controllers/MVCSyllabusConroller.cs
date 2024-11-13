@@ -30,28 +30,112 @@ namespace MVC.Controllers
             return View("Test");
         }
 
+        public IActionResult Syllabus()
+        {
+            return View("TimeLine");
+        }
+
         [HttpGet]
-        public JsonResult GetSyllabusData()
+        [Route("MVCSyllabus/GetSyllabusTimelineData/{cwsid}")]
+        public JsonResult GetSyllabusTimelineData(int cwsid)
         {
             var syllabusData = new List<Syllabus>();
 
             using (var connection = new NpgsqlConnection(connectionString))
             {
                 connection.Open();
-                using (var command = new NpgsqlCommand("SELECT * FROM t_Syllabus ORDER BY c_start ASC;", connection))
-                using (var reader = command.ExecuteReader())
+                using (var command = new NpgsqlCommand("SELECT * FROM t_Syllabus WHERE c_CWSID = @cwsid ORDER BY c_start ASC;", connection))
                 {
-                    while (reader.Read())
+                    command.Parameters.AddWithValue("@cwsid", cwsid);
+
+                    using (var reader = command.ExecuteReader())
                     {
-                        syllabusData.Add(new Syllabus
+                        while (reader.Read())
                         {
-                            SyllabusID = (int)reader["c_SyllabusID"],
-                            CWSID = (int)reader["c_CWSID"],
-                            title = (string)reader["c_chapterName"],
-                            Start = (DateTime)reader["c_start"],
-                            End = (DateTime)reader["c_end"],
-                            percentComplete = (double)reader["c_completed"]
-                        });
+                            syllabusData.Add(new Syllabus
+                            {
+                                SyllabusID = (int)reader["c_SyllabusID"],
+                                CWSID = (int)reader["c_CWSID"],
+                                title = (string)reader["c_chapterName"],
+                                Start = (DateTime)reader["c_start"],
+                                End = (DateTime)reader["c_end"],
+                                percentComplete = (double)reader["c_completed"]
+                            });
+                        }
+                    }
+                }
+            }
+
+            var data = syllabusData.Select(s => new
+            {
+                s.SyllabusID,
+                s.title,
+                Start = s.Start.ToString("yyyy/MM/dd H:mm"),
+                End = s.End.ToString("yyyy/MM/dd H:mm"),
+                s.percentComplete
+            });
+
+            return Json(data);
+        }
+
+        // ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        [HttpGet]
+        public JsonResult GetCWSID(int subjectId, string standard)
+        {
+            int? cwsid = null;
+
+            using (var connection = new NpgsqlConnection(connectionString))
+            {
+                connection.Open();
+
+                using (var command = new NpgsqlCommand("SELECT c_id FROM t_ClassWise_Subjects WHERE c_Subject_ID = @SubjectID AND c_Standard = @Standard;", connection))
+                {
+                    command.Parameters.AddWithValue("@SubjectID", subjectId);
+                    command.Parameters.AddWithValue("@Standard", standard);
+
+                    cwsid = (int?)command.ExecuteScalar();
+                }
+            }
+            return Json(new { cwsid });
+        }
+
+        [HttpGet]
+        [Route("MVCSyllabus/GetSyllabusData/{cwsid}")]
+        public JsonResult GetSyllabusData(int cwsid)
+        {
+            int id = 0;
+            // int? id = HttpContext.Session.GetInt32("user_id");
+            Console.WriteLine("cwsid = " + cwsid);
+            var syllabusData = new List<Syllabus>();
+
+            using (var connection = new NpgsqlConnection(connectionString))
+            {
+                connection.Open();
+                var command = new NpgsqlCommand("select c_teacher_id from t_teachers where c_user_id = @id;", connection);
+                command.Parameters.AddWithValue("@id", id!);
+                int teacherId = (int)command.ExecuteScalar()!;
+
+                // using (var command = new NpgsqlCommand("SELECT * FROM t_Syllabus WHERE c_CWSID = @cwsid and c_teacher_id = @teacherid ORDER BY c_start ASC;", connection))
+                using (command = new NpgsqlCommand("SELECT * FROM t_Syllabus WHERE c_CWSID = @cwsid ORDER BY c_start ASC;", connection))
+                {
+                    command.Parameters.AddWithValue("@cwsid", cwsid);
+                    // command.Parameters.AddWithValue("@teacherid", teacherid);
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            syllabusData.Add(new Syllabus
+                            {
+                                SyllabusID = (int)reader["c_SyllabusID"],
+                                CWSID = (int)reader["c_CWSID"],
+                                title = (string)reader["c_chapterName"],
+                                Start = (DateTime)reader["c_start"],
+                                End = (DateTime)reader["c_end"],
+                                percentComplete = (double)reader["c_completed"]
+                            });
+                        }
                     }
                 }
             }
@@ -66,6 +150,7 @@ namespace MVC.Controllers
                 s.percentComplete,
                 done = s.percentComplete * 100
             });
+
             return Json(data);
         }
 
@@ -98,7 +183,7 @@ namespace MVC.Controllers
 
             return Json(subjects);
         }
-        
+
         [HttpGet]
         public JsonResult GetStandards()
         {
