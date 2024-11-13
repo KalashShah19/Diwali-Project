@@ -12,10 +12,10 @@ public class FeesInfo
         [DataType(DataType.Currency, ErrorMessage = "Please enter a valid amount.")]
         public int Amount { get; set; }
         [Required(ErrorMessage = "Please enter a valid year.")]
-        public int BatchYear { get; set; }
+        public required string BatchYear { get; set; }
         [Required(ErrorMessage = "Please enter a valid standard.")]
         [Range(1, 12, ErrorMessage = "Standard must be between 1 to 12")]
-        public int Standard { get; set; }
+        public required string Standard { get; set; }
     }
 
     public class Post
@@ -24,9 +24,9 @@ public class FeesInfo
         [DataType(DataType.Currency, ErrorMessage = "Please enter a valid amount.")]
         public int Amount { get; set; }
         [Required(ErrorMessage = "Please enter a valid year.")]
-        public int BatchYear { get; set; }
+        public required string BatchYear { get; set; }
         [Required(ErrorMessage = "Please enter a valid standard.")]
         [Range(1, 12, ErrorMessage = "Standard must be between 1 to 12")]
-        public int Standard { get; set; }
+        public required string Standard { get; set; }
     }
 }

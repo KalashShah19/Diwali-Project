@@ -1,5 +1,5 @@
 Login - Auto Redirect to User's Dashboard + Captcha - Dhruv
-Register - Multi-Step Form + Admin Approval (max 60) - Dhruv
+Register - Multi-Step Form + Admin Approval - Dhruv
 Forgot Password - Dhruv
 
 Student - Anvi, Sahil, Meet, Kalash [A]
@@ -17,13 +17,17 @@ Teacher - Yash, Pritam, Nitin, Kalash [B]
     Fees - Read Only
     View Feedbacks - Read Only (Annonymous)
 
-Admin - Ayush, Ashish [C]
+Admin - Ayush
     Dashboard - Student + Teacher in Hierarchical View - CRUD
-    Assign Teacher 
-    Stardard Management - max 60
-    Confirm Teacher and Student (max 60) Requests
-    School Info Management 
-    Fees 
+    Hire Teacher and Admit Student
+    SchoolInfo Management 
+    Feedback Viewer
+    Fees Management
+    Standard Management
+    Subject Management
+    Classwise Subject Management
+
+Email Templates, Mailer - Ashish
 
 EXTRA 
     Marks Management

@@ -96,7 +96,11 @@
                 { field: "feesID", title: "Fees ID" },
                 {
                     field: "standard", title: "Standard", editor: function (container, options) {
-                        $("<ul data-bind='value:standard'></ul>").appendTo(container).kendoDropDownList({
+                        if (!options.model.isNew()) {
+                            $(`<strong>${options.model.standard}</strong>`).appendTo(container);
+                            return;
+                        }
+                        $("<input data-bind='value:standard' required name='Standard' />").appendTo(container).kendoDropDownList({
                             optionLabel: "-- Select Standard --",
                             dataSource: {
                                 transport: {
@@ -109,8 +113,21 @@
                         });
                     }
                 },
-                { field: "batchYear", title: "Batch Year" },
-                { field: "amount", title: "Amount" },
+                {
+                    field: "batchYear", title: "Batch Year", editor: function (container, options) {
+                        if (!options.model.isNew()) {
+                            $(`<strong>${options.model.batchYear}</strong>`).appendTo(container);
+                            return;
+                        }
+                        $(`<input data-bind="value:batchYear" required name="Batch Year" />`).appendTo(container).kendoTextBox();
+                    }
+                },
+                {
+                    field: "amount", title: "Amount", editor: function (container, options) {
+
+                        $(`<input data-bind="value:amount" required name="Amount" />`).appendTo(container).kendoTextBox();
+                    }
+                },
                 { command: ["edit", "destroy"], title: "Action" }
             ],
             toolbar: ["create"],

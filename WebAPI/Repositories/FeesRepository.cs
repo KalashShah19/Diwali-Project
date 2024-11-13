@@ -30,12 +30,12 @@ public class FeesRepository : IFeesRepository
         using NpgsqlDataReader reader = getFeeStructureCommand.ExecuteReader();
         while (reader.Read())
         {
-            feeStructure.Add(new() { FeesID = reader.GetInt16(0), Amount = reader.GetInt32(1), BatchYear = reader.GetInt16(2), Standard = reader.GetInt16(3) });
+            feeStructure.Add(new() { FeesID = reader.GetInt16(0), Amount = reader.GetInt32(1), BatchYear = reader.GetString(2), Standard = reader.GetString(3) });
         }
         return feeStructure;
     }
 
-    public List<FeesInfo.Get> GetFeeStructure(int batchYear)
+    public List<FeesInfo.Get> GetFeeStructure(string batchYear)
     {
         List<FeesInfo.Get> feeStructure = [];
         NpgsqlCommand getFeeStructureCommand = new("SELECT * from t_fees_structure WHERE c_batch_year = @year", connection);
@@ -43,18 +43,18 @@ public class FeesRepository : IFeesRepository
         using NpgsqlDataReader reader = getFeeStructureCommand.ExecuteReader();
         while (reader.Read())
         {
-            feeStructure.Add(new() { FeesID = reader.GetInt16(0), Amount = reader.GetInt32(1), BatchYear = reader.GetInt16(2), Standard = reader.GetInt16(3) });
+            feeStructure.Add(new() { FeesID = reader.GetInt16(0), Amount = reader.GetInt32(1), BatchYear = reader.GetString(2), Standard = reader.GetString(3) });
         }
         return feeStructure;
     }
 
-    public FeesInfo.Get GetFeeStructure(int standard, int batchYear)
+    public FeesInfo.Get GetFeeStructure(string standard, string batchYear)
     {
         NpgsqlCommand getFeeStructureCommand = new("SELECT * from t_fees_structure WHERE c_standard = @standard, c_batch_year = @batchyear", connection);
         getFeeStructureCommand.Parameters.AddWithValue("standard", standard);
         getFeeStructureCommand.Parameters.AddWithValue("batchyear", batchYear);
         using NpgsqlDataReader reader = getFeeStructureCommand.ExecuteReader();
-        if (reader.Read()) return new() { FeesID = reader.GetInt16(0), Amount = reader.GetInt32(1), BatchYear = reader.GetInt16(2), Standard = reader.GetInt16(3) };
+        if (reader.Read()) return new() { FeesID = reader.GetInt16(0), Amount = reader.GetInt32(1), BatchYear = reader.GetString(2), Standard = reader.GetString(3) };
         throw new Exception($"Failed to read fee structure of with standard {standard} of batch year {batchYear}");
     }
 
@@ -63,7 +63,7 @@ public class FeesRepository : IFeesRepository
         NpgsqlCommand getFeeStructureCommand = new("SELECT * from t_fees_structure WHERE c_id = @id", connection);
         getFeeStructureCommand.Parameters.AddWithValue("id", feesinfoid);
         using NpgsqlDataReader reader = getFeeStructureCommand.ExecuteReader();
-        if (reader.Read()) return new() { FeesID = reader.GetInt16(0), Amount = reader.GetInt32(1), BatchYear = reader.GetInt16(2), Standard = reader.GetInt16(3) };
+        if (reader.Read()) return new() { FeesID = reader.GetInt16(0), Amount = reader.GetInt32(1), BatchYear = reader.GetString(2), Standard = reader.GetString(3) };
         throw new Exception($"Failed to read fee structure of id {feesinfoid}");
     }
 

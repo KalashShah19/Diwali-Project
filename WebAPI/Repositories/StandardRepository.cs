@@ -18,18 +18,18 @@ public class StandardRepository : IStandardRepository
         if (!Enumerable.Range(1, 12).Contains(standard)) throw new Exception("Standard must be between 1 to 12.");
         if (IsStandardExists(standard)) throw new Exception($"Standard {standard} already exists.");
         NpgsqlCommand addStandardCommand = new("INSERT INTO t_standards VALUES(@standard)", connection);
-        addStandardCommand.Parameters.AddWithValue("standard", standard);
+        addStandardCommand.Parameters.AddWithValue("standard", standard.ToString());
         addStandardCommand.ExecuteNonQuery();
     }
 
-    public List<int> GetStandards()
+    public List<string> GetStandards()
     {
-        List<int> standards = [];
-        NpgsqlCommand getStandardsCommand = new("SELECT * from t_standards", connection);
+        List<string> standards = [];
+        NpgsqlCommand getStandardsCommand = new("SELECT c_standard from t_standards ORDER BY CAST(c_standard as int)", connection);
         using NpgsqlDataReader reader = getStandardsCommand.ExecuteReader();
         while (reader.Read())
         {
-            standards.Add(reader.GetInt16(0));
+            standards.Add(reader.GetString(0));
         }
         return standards;
     }
@@ -37,7 +37,7 @@ public class StandardRepository : IStandardRepository
     private bool IsStandardExists(int standard)
     {
         NpgsqlCommand getStandardCommand = new("SELECT * from t_standards WHERE c_standard = @standard", connection);
-        getStandardCommand.Parameters.AddWithValue("standard", standard);
+        getStandardCommand.Parameters.AddWithValue("standard", standard.ToString());
         using NpgsqlDataReader reader = getStandardCommand.ExecuteReader();
         return reader.HasRows;
     }
@@ -46,7 +46,7 @@ public class StandardRepository : IStandardRepository
     {
         if (!IsStandardExists(standard)) throw new Exception($"Standard {standard} doesn't exists.");
         NpgsqlCommand deleteStandardCommand = new("DELETE FROM t_standards WHERE c_standard = @standard", connection);
-        deleteStandardCommand.Parameters.AddWithValue("standard", standard);
+        deleteStandardCommand.Parameters.AddWithValue("standard", standard.ToString());
         deleteStandardCommand.ExecuteNonQuery();
     }
 }

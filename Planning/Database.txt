@@ -22,8 +22,9 @@ Student
 
 Teacher
     userID
-    Specialization
+    teacherId
     Education
+    standard
     working
     joiningDate
 
@@ -55,9 +56,8 @@ Standard
 ClassWiseSubjects
     CWSID
     subjectID
-    userID - Teacher
-    standardID
-    Batch / Year    
+    Teacherid
+    standard
 
 TimeTable
     Time

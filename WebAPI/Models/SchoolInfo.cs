@@ -18,7 +18,7 @@ public class SchoolInfo
         [Required(ErrorMessage = "Please enter school address.", AllowEmptyStrings = false)]
         public required string SchoolAddress { get; set; }
         [Required(ErrorMessage = "Please enter school contact number.", AllowEmptyStrings = false)]
-        [DataType(DataType.PhoneNumber, ErrorMessage = "Please enter a valid phone number.")]
+        [RegularExpression(@"^[6789][\d]{9}$", ErrorMessage = "Please enter a valid mobile number.")]
         public required string SchoolContactNumber { get; set; }
         public IFormFile? PrincipalImage { get; set; }
         [RegularExpression(@"^[a-zA-Z\s]+$", ErrorMessage = "Please enter a valid name.")]
