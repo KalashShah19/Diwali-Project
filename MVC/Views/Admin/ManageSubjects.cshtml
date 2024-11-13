@@ -67,7 +67,11 @@
             },
             columns: [
                 { field: "subjectId", title: "Subject ID" },
-                { field: "subjectName", title: "Subject Name" },
+                {
+                    field: "subjectName", title: "Subject Name", editor: function (container, options) {
+                        $("<input type='text' data-bind='value:subjectName' name='Subject Name' required />").appendTo(container).kendoTextBox();
+                    }
+                },
                 { command: ["destroy"], title: "Action" }
             ],
             toolbar: ["create"],

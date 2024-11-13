@@ -104,7 +104,7 @@
                 {
                     field: "address", title: "Address", editor: function (container, options) {
                         $("#address-form-label").hide();
-                        $(`<ul data-bind="value:standard"></ul>`).appendTo(container).kendoDropDownList({
+                        $(`<input data-bind="value:standard"  required name="Standard"/>`).appendTo(container).kendoDropDownList({
                             optionLabel: "-- Select Standard -- ",
                             label: "Standard", dataSource: {
                                 transport: {
