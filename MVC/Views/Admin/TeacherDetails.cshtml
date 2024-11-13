@@ -50,7 +50,8 @@
                             const formData = new FormData();
                             formData.append("teacherId", data.teacherId);
                             formData.append("qualification", "PhD");
-                            formData.append("standard", data.standard);
+                            if (data.working) formData.append("standard", data.standard);
+                            else formData.append("standard", '');
                             formData.append("working", data.working);
                             return formData;
                         }
