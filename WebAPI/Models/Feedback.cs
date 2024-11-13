@@ -14,7 +14,7 @@ public class Feedback
 
     public class Get
     {
-        public required int TeacherId { get; set; }
+        public required string TeacherName { get; set; }
         public required int Rating { get; set; }
         public string? Comment { get; set; }
         public required string BatchYear { get; set; }

@@ -27,20 +27,18 @@ public class FeedbackRepository : IFeedbackRepository
 
     public List<Feedback.Get> GetFeedbacks()
     {
-        // TODO("Perform Join with Teacher Table to Get Teacher Name")
         List<Feedback.Get> feedbacks = [];
-        NpgsqlCommand getFeedbacksCommand = new("SELECT * from t_feedbacks", connection);
+        NpgsqlCommand getFeedbacksCommand = new("SELECT c_feedback_date, c_name, c_rating, c_comment, c_batch_year from t_feedbacks tf INNER JOIN t_teachers tt ON tf.c_teacher_id = tt.c_teacher_id INNER JOIN t_users tu ON tu.c_user_id = tt.c_user_id", connection);
         using NpgsqlDataReader reader = getFeedbacksCommand.ExecuteReader();
         while (reader.Read())
         {
-            feedbacks.Add(new() { TeacherId = reader.GetInt16(1), Rating = reader.GetInt16(2), Comment = reader.IsDBNull(3) ? null : reader.GetString(3), BatchYear = reader.GetString(4), FeedbackDate = reader.GetDateTime(5) });
+            feedbacks.Add(new() { TeacherName = reader.GetString(1), Rating = reader.GetInt16(2), Comment = reader.IsDBNull(3) ? null : reader.GetString(3), BatchYear = reader.GetString(4), FeedbackDate = reader.GetDateTime(0) });
         }
         return feedbacks;
     }
 
     public List<Feedback.TeacherGet> GetFeedbacks(int teacherid)
     {
-        // TODO("Perform Join with Teacher Table to Get Teacher Name")
         List<Feedback.TeacherGet> feedbacks = [];
         NpgsqlCommand getFeedbacksCommand = new("SELECT * from t_feedbacks WHERE c_teacher_id = @teacherid", connection);
         getFeedbacksCommand.Parameters.AddWithValue("teacherid", teacherid);
@@ -60,7 +58,7 @@ public class FeedbackRepository : IFeedbackRepository
         using NpgsqlDataReader reader = getFeedbacksCommand.ExecuteReader();
         while (reader.Read())
         {
-            feedbacks.Add(new() { TeacherId = reader.GetInt16(1), Rating = reader.GetInt16(2), Comment = reader.IsDBNull(3) ? null : reader.GetString(3), BatchYear = reader.GetString(4), FeedbackDate = reader.GetDateTime(5) });
+            feedbacks.Add(new() { TeacherName = reader.GetString(1), Rating = reader.GetInt16(2), Comment = reader.IsDBNull(3) ? null : reader.GetString(3), BatchYear = reader.GetString(4), FeedbackDate = reader.GetDateTime(0) });
         }
         return feedbacks;
     }

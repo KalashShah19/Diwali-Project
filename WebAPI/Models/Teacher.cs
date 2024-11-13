@@ -21,7 +21,7 @@ public class Teacher
     public class HireTeacher
     {
         public int UserId { get; set; }
-        public required string Standard { get; set; }
+        public string? Standard { get; set; }
         public required string Qualification { get; set; }
         public bool Working = true;
         public DateTime JoiningDate = DateTime.Now;

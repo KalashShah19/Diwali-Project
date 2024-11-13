@@ -16,11 +16,31 @@ public class ClasswiseSubjectRepository : IClasswiseSubjectRepository
 
     public void AddClasswiseSubject(ClasswiseSubjects.Post addDetails)
     {
+        if (IsClasswiseSubjectExist(addDetails.Standard, addDetails.SubjectId)) throw new Exception($"Standard {addDetails.Standard} already contains this subject.");
+        if (SubjectCount(addDetails.Standard) >= 7) throw new Exception("Each standard can only contain 7 subjects.");
         NpgsqlCommand addClasswiseSubjectCommand = new("INSERT INTO t_classwise_subjects(c_standard, c_teacher_id, c_subject_id) VALUES(@standard, @teacher, @subject)", connection);
         addClasswiseSubjectCommand.Parameters.AddWithValue("standard", addDetails.Standard);
         addClasswiseSubjectCommand.Parameters.AddWithValue("teacher", addDetails.TeacherId);
         addClasswiseSubjectCommand.Parameters.AddWithValue("subject", addDetails.SubjectId);
         addClasswiseSubjectCommand.ExecuteNonQuery();
+    }
+
+    private bool IsClasswiseSubjectExist(string standard, int subjectid)
+    {
+        NpgsqlCommand checkClasswiseSubjectCommand = new("SELECT * FROM t_classwise_subjects WHERE c_standard = @standard and c_subject_id = @subjectid", connection);
+        checkClasswiseSubjectCommand.Parameters.AddWithValue("standard", standard);
+        checkClasswiseSubjectCommand.Parameters.AddWithValue("subjectid", subjectid);
+        using NpgsqlDataReader reader = checkClasswiseSubjectCommand.ExecuteReader();
+        return reader.HasRows;
+    }
+
+    private int SubjectCount(string standard)
+    {
+        NpgsqlCommand checkClasswiseSubjectCommand = new("SELECT COUNT(*) FROM t_classwise_subjects WHERE c_standard = @standard", connection);
+        checkClasswiseSubjectCommand.Parameters.AddWithValue("standard", standard);
+        using NpgsqlDataReader reader = checkClasswiseSubjectCommand.ExecuteReader();
+        if (reader.Read()) return reader.GetInt16(0);
+        return 0;
     }
 
     public List<ClasswiseSubjects.Get> GetClasswiseSubjects()

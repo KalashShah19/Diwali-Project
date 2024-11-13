@@ -39,6 +39,18 @@ public class TeacherRepository : ITeacherRepository
         return teacherDetails;
     }
 
+    public List<Teacher.TeacherDetails> GetWorkingTeacherList()
+    {
+        List<Teacher.TeacherDetails> teacherDetails = [];
+        NpgsqlCommand getAdmissionRequestCommand = new("SELECT c_teacher_id, c_image, c_name, c_standard, c_qualification, c_email, c_mobile_number, c_gender, c_birth_date, c_address, c_joining_date, c_working FROM t_teachers inner join t_users ON t_teachers.c_user_id = t_users.c_user_id WHERE t_teachers.c_working = true", connection);
+        using NpgsqlDataReader reader = getAdmissionRequestCommand.ExecuteReader();
+        while (reader.Read())
+        {
+            teacherDetails.Add(new() { TeacherId = reader.GetInt32(0), Image = reader.GetString(1), Name = reader.GetString(2), Standard = reader.IsDBNull(3) ? null : reader.GetString(3), Qualification = reader.GetString(4), Email = reader.GetString(5), MobileNumber = reader.GetString(6), Gender = EnumHelper.GetGender(reader.GetString(7)), BirthDate = reader.GetDateTime(8), Address = reader.GetString(9), JoiningDate = reader.GetDateTime(10), Working = reader.GetBoolean(11) });
+        }
+        return teacherDetails;
+    }
+
     public void HireTeacher(Teacher.HireTeacher teacher)
     {
         NpgsqlCommand verifyStudentCommand = new("UPDATE t_users SET c_verified = true WHERE c_user_id = @userid", connection);
@@ -47,7 +59,7 @@ public class TeacherRepository : ITeacherRepository
 
         NpgsqlCommand admitStudentCommand = new("INSERT INTO t_teachers(c_user_id, c_standard, c_qualification, c_joining_date, c_working) VALUES(@userid, @standard, @qualification, @joiningdate, @working)", connection);
         admitStudentCommand.Parameters.AddWithValue("userid", teacher.UserId);
-        admitStudentCommand.Parameters.AddWithValue("standard", teacher.Standard);
+        admitStudentCommand.Parameters.AddWithValue("standard", string.IsNullOrEmpty(teacher.Standard) ? DBNull.Value : teacher.Standard);
         admitStudentCommand.Parameters.AddWithValue("qualification", teacher.Qualification);
         admitStudentCommand.Parameters.AddWithValue("joiningdate", teacher.JoiningDate);
         admitStudentCommand.Parameters.AddWithValue("working", teacher.Working);

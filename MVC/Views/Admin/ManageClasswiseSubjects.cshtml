@@ -39,7 +39,7 @@
                                 $("#notification").getKendoNotification().show(data.responseJSON.message, "info");
                                 classwisesubjectgrid.data("kendoGrid").dataSource.read();
                             } else {
-                                $("#notification").getKendoNotification().show(data.statusText, "error");
+                                $("#notification").getKendoNotification().show(data.responseJSON.message, "error");
                             }
                         },
                     },
@@ -109,14 +109,14 @@
                 { field: "id", title: "Allotment ID" },
                 {
                     field: "teacherId", title: "Teacher Name", template: (options) => options.teacherName, editor: function (container, options) {
-                        $(`<ul data-bind="value:teacherId"></ul>`).appendTo(container).kendoDropDownList({
+                        $(`<input required data-bind="value:teacherId" name="Teacher"/>`).appendTo(container).kendoDropDownList({
                             optionLabel: "-- Select Teacher --",
                             dataTextField: "name",
                             dataValueField: "teacherId",
                             dataSource: {
                                 transport: {
                                     read: {
-                                        url: `${apihost}/api/Admin/GetTeacherDetails`,
+                                        url: `${apihost}/api/Admin/GetWorkingTeacherDetails`,
                                         dataType: "json"
                                     },
                                 },
@@ -136,7 +136,11 @@
                 },
                 {
                     field: "subjectId", title: "Subject Name", template: (options) => options.subjectName, editor: function (container, options) {
-                        $(`<ul data-bind="value:subjectId"></ul>`).appendTo(container).kendoDropDownList({
+                        if (!options.model.isNew()) {
+                            $(`<strong>${options.model.subjectName}</strong>`).appendTo(container);
+                            return;
+                        }
+                        $(`<input data-bind="value:subjectId" required name="Subject" />`).appendTo(container).kendoDropDownList({
                             optionLabel: "-- Select Subject --",
                             dataValueField: "subjectId",
                             dataTextField: "subjectName",
@@ -150,7 +154,11 @@
                 },
                 {
                     field: "standard", title: "Standard", editor: function (container, options) {
-                        $(`<ul data-bind="value:standard"></ul>`).appendTo(container).kendoDropDownList({
+                        if (!options.model.isNew()) {
+                            $(`<strong>${options.model.standard}</strong>`).appendTo(container);
+                            return;
+                        }
+                        $(`<input data-bind="value:standard" name="Standard" required/>`).appendTo(container).kendoDropDownList({
                             optionLabel: "-- Select Standard --",
                             dataSource: {
                                 transport: {
