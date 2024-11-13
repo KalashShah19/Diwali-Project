@@ -50,7 +50,8 @@
                             const formData = new FormData();
                             formData.append("teacherId", data.teacherId);
                             formData.append("qualification", "PhD");
-                            formData.append("standard", data.standard);
+                            if (data.working) formData.append("standard", data.standard);
+                            else formData.append("standard", '');
                             formData.append("working", data.working);
                             return formData;
                         }
@@ -84,12 +85,15 @@
                 { field: "name", title: "Name" },
                 {
                     field: "standard", title: "Standard", template: (data) => data.standard ? data.standard : "None", editor: function (container, options) {
-                        $(`<ul data-bind="value:standard"></ul>`).appendTo(container).kendoDropDownList({
+                        $(`<input data-bind="value:standard" name="Standard" />`).appendTo(container).kendoDropDownList({
                             optionLabel: "--Select Standard --",
                             dataSource: {
                                 transport: {
                                     read: `${apihost}/api/Admin/GetStandards`
-                                }
+                                },
+                            },
+                            change: function () {
+                                options.model.dirty = true;
                             }
                         });
                     }
