@@ -24,7 +24,6 @@
                             if (data.status === 200) {
                                 $("#notification").getKendoNotification().show("Standards fetched successfully", "info");
                             } else {
-                                console.log(data)
                                 $("#notification").getKendoNotification().show(data.statusText, "error");
                             }
                         }
@@ -38,8 +37,8 @@
                                 $("#notification").getKendoNotification().show(data.responseJSON.message, "info");
                                 standardGrid.data("kendoGrid").dataSource.read();
                             } else {
-                                console.log(data)
                                 $("#notification").getKendoNotification().show(data.responseJSON.message, "error");
+                                standardGrid.data("kendoGrid").dataSource.read();
                             }
                         }
                     },
@@ -49,12 +48,11 @@
                         dataType: "json",
                         complete: function (data) {
                             if (data.status === 200) {
-                                console.log(data);
                                 $("#notification").getKendoNotification().show(data.responseJSON.message, "info");
                                 standardGrid.data("kendoGrid").dataSource.read();
                             } else {
-                                console.log(data)
                                 $("#notification").getKendoNotification().show(data.responseJSON.message, "error");
+                                standardGrid.data("kendoGrid").dataSource.read();
                             }
                         }
                     }

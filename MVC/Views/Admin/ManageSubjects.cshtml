@@ -36,7 +36,8 @@
                                 $("#notification").getKendoNotification().show(data.responseJSON.message, "info");
                                 subjectsGrid.data("kendoGrid").dataSource.read();
                             } else {
-                                $("#notification").getKendoNotification().show(data.statusText, "error");
+                                $("#notification").getKendoNotification().show(data.responseJSON.message, "error");
+                                subjectsGrid.data("kendoGrid").dataSource.read();
                             }
                         },
                     },
@@ -50,7 +51,8 @@
                                 $("#notification").getKendoNotification().show(data.responseJSON.message, "info");
                                 subjectsGrid.data("kendoGrid").dataSource.read();
                             } else {
-                                $("#notification").getKendoNotification().show(data.statusText, "error");
+                                $("#notification").getKendoNotification().show(data.responseJSON.message, "error");
+                                subjectsGrid.data("kendoGrid").dataSource.read();
                             }
                         },
                     }

@@ -42,9 +42,18 @@ public class StandardRepository : IStandardRepository
         return reader.HasRows;
     }
 
+    private bool IsStandardinUse(int standard)
+    {
+        NpgsqlCommand checkStandardCommand = new("SELECT * FROM t_classwise_subjects WHERE c_standard = @standard", connection);
+        checkStandardCommand.Parameters.AddWithValue("standard", standard.ToString());
+        using NpgsqlDataReader reader = checkStandardCommand.ExecuteReader();
+        return reader.HasRows;
+    }
+
     public void RemoveStandard(int standard)
     {
         if (!IsStandardExists(standard)) throw new Exception($"Standard {standard} doesn't exists.");
+        if (IsStandardinUse(standard)) throw new Exception($"Standard {standard} already in use.");
         NpgsqlCommand deleteStandardCommand = new("DELETE FROM t_standards WHERE c_standard = @standard", connection);
         deleteStandardCommand.Parameters.AddWithValue("standard", standard.ToString());
         deleteStandardCommand.ExecuteNonQuery();
