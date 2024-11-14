@@ -36,13 +36,22 @@ public class SubjectRepository : ISubjectRepository
     private bool IsSubjectExist(string subjectname)
     {
         NpgsqlCommand getSubjectCommand = new("SELECT * FROM t_subjects WHERE LOWER(c_subject_name) LIKE LOWER(@subjectname)", connection);
-          getSubjectCommand.Parameters.AddWithValue("subjectname", $"%{subjectname}%");
+        getSubjectCommand.Parameters.AddWithValue("subjectname", $"%{subjectname}%");
         using NpgsqlDataReader reader = getSubjectCommand.ExecuteReader();
+        return reader.HasRows;
+    }
+
+    private bool IsSubjectinUse(int subjectid)
+    {
+        NpgsqlCommand checkSubjectCommand = new("SELECT * FROM t_classwise_subjects WHERE c_subject_id = @subjectid", connection);
+        checkSubjectCommand.Parameters.AddWithValue("subjectid", subjectid);
+        using NpgsqlDataReader reader = checkSubjectCommand.ExecuteReader();
         return reader.HasRows;
     }
 
     public void RemoveSubject(int subjectid)
     {
+        if (IsSubjectinUse(subjectid)) throw new Exception("Subject already in use.");
         NpgsqlCommand deleteStandardCommand = new("DELETE FROM t_subjects WHERE c_subject_id = @subid", connection);
         deleteStandardCommand.Parameters.AddWithValue("subid", subjectid);
         deleteStandardCommand.ExecuteNonQuery();
