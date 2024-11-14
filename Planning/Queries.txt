@@ -1,0 +1,9 @@
+
+INSERT INTO t_Syllabus (c_CWSID, c_chapterName, c_start, c_end, c_completed)
+VALUES (74, 'Introduction to Computers', '2024-11-15 09:00:00', '2024-11-25 11:00:00', 0.5) ,
+(74, 'Why Computers', '2024-11-26 10:00:00', '2024-12-16 12:30:00', 0), 
+(74, 'Components of Computers', '2024-12-17 13:00:00', '2024-12-30 15:00:00', 0);
+
+truncate t_syllabus
+
+SELECT DISTINCT c_subject_id, c_subject_name FROM t_classwise_subjects NATURAL JOIN t_subjects WHERE c_teacher_id = 119 ORDER BY c_subject_name;

@@ -20,19 +20,44 @@ namespace MVC.Controllers
             con = new NpgsqlConnection(connectionString);
         }
 
-        public IActionResult Index()
+        public IActionResult Gantt()
         {
-            return View();
-        }
-
-        public IActionResult Test()
-        {
-            return View("Test");
+            return View("Gantt");
         }
 
         public IActionResult Syllabus()
         {
             return View("TimeLine");
+        }
+
+        [HttpGet("GetStudentClass/{userID}")]
+        public JsonResult GetStudentClass(int userID)
+        {
+            int studentClass = 0;
+
+            using (var connection = new NpgsqlConnection(connectionString))
+            {
+                connection.Open();
+                using (var command = new NpgsqlCommand("SELECT Class FROM Student WHERE userID = @userID AND studying = true;", connection))
+                {
+                    command.Parameters.AddWithValue("@userID", userID);
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            studentClass = (int)reader["Class"]!;
+                        }
+                    }
+                }
+            }
+
+            if (studentClass == 0)
+            {
+                return Json(new { success = false, message = "Student not found or not currently studying." });
+            }
+
+            return Json(new { success = true, studentClass });
         }
 
         [HttpGet]
@@ -66,35 +91,90 @@ namespace MVC.Controllers
                 }
             }
 
-            var data = syllabusData.Select(s => new
+            var Data = syllabusData.Select(s => new
             {
-                s.SyllabusID,
-                s.title,
-                Start = s.Start.ToString("yyyy/MM/dd H:mm"),
-                End = s.End.ToString("yyyy/MM/dd H:mm"),
-                s.percentComplete
-            });
+                title = s.title,
+                subtitle = s.Start.ToString("MMMM dd, yyyy"),
+                date = s.Start,
+                description = s.percentComplete * 100 + "% Completed",
+            }).ToList();
 
-            return Json(data);
+            return Json(Data);
         }
 
         // ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         [HttpGet]
-        public JsonResult GetCWSID(int subjectId, string standard)
+        public JsonResult GetSubjects()
         {
-            int? cwsid = null;
+            int id = 142;
+            long teacherId;
+            var subjects = new List<Subject>();
+            using (var connection = new NpgsqlConnection(connectionString))
+            {
+                connection.Open();
+                var command = new NpgsqlCommand("select c_teacher_id from t_teachers where c_user_id = @id;", connection);
+                command.Parameters.AddWithValue("@id", id!);
+                teacherId = (long)command.ExecuteScalar()!;
+                // Console.WriteLine("teacher id = "+ teacherId);
+
+                using (command = new NpgsqlCommand("SELECT DISTINCT c_subject_id, c_subject_name FROM t_classwise_subjects NATURAL JOIN t_subjects WHERE c_teacher_id = @teacherid ORDER BY c_subject_name;", connection))
+                {
+                    command.Parameters.AddWithValue("@teacherid", teacherId);
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            subjects.Add(new Subject
+                            {
+                                Id = (int)reader["c_subject_id"],
+                                Name = (string)reader["c_subject_name"]
+                            });
+                        }
+                    }
+                }
+            }
+            return Json(subjects);
+        }
+
+        [HttpGet]
+        public JsonResult GetStandards()
+        {
+            var standards = new List<Standard>();
 
             using (var connection = new NpgsqlConnection(connectionString))
             {
                 connection.Open();
 
+                using (var command = new NpgsqlCommand("SELECT c_standard FROM t_standards ORDER BY c_standard;", connection))
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        standards.Add(new Standard
+                        {
+                            standard = reader["c_standard"].ToString(),
+                        });
+                    }
+                }
+            }
+
+            return Json(standards);
+        }
+
+        [HttpGet]
+        public JsonResult GetCWSID(int subjectId, string standard)
+        {
+            int cwsid = 0;
+            using (var connection = new NpgsqlConnection(connectionString))
+            {
+                connection.Open();
                 using (var command = new NpgsqlCommand("SELECT c_id FROM t_ClassWise_Subjects WHERE c_Subject_ID = @SubjectID AND c_Standard = @Standard;", connection))
                 {
                     command.Parameters.AddWithValue("@SubjectID", subjectId);
                     command.Parameters.AddWithValue("@Standard", standard);
-
-                    cwsid = (int?)command.ExecuteScalar();
+                    cwsid = (int)command.ExecuteScalar()!;
                 }
             }
             return Json(new { cwsid });
@@ -104,9 +184,9 @@ namespace MVC.Controllers
         [Route("MVCSyllabus/GetSyllabusData/{cwsid}")]
         public JsonResult GetSyllabusData(int cwsid)
         {
-            int id = 0;
+            int id = 142;
             // int? id = HttpContext.Session.GetInt32("user_id");
-            Console.WriteLine("cwsid = " + cwsid);
+            long teacherId = 0;
             var syllabusData = new List<Syllabus>();
 
             using (var connection = new NpgsqlConnection(connectionString))
@@ -114,13 +194,11 @@ namespace MVC.Controllers
                 connection.Open();
                 var command = new NpgsqlCommand("select c_teacher_id from t_teachers where c_user_id = @id;", connection);
                 command.Parameters.AddWithValue("@id", id!);
-                int teacherId = (int)command.ExecuteScalar()!;
+                teacherId = (long)command.ExecuteScalar()!;
 
-                // using (var command = new NpgsqlCommand("SELECT * FROM t_Syllabus WHERE c_CWSID = @cwsid and c_teacher_id = @teacherid ORDER BY c_start ASC;", connection))
                 using (command = new NpgsqlCommand("SELECT * FROM t_Syllabus WHERE c_CWSID = @cwsid ORDER BY c_start ASC;", connection))
                 {
                     command.Parameters.AddWithValue("@cwsid", cwsid);
-                    // command.Parameters.AddWithValue("@teacherid", teacherid);
 
                     using (var reader = command.ExecuteReader())
                     {
@@ -155,84 +233,34 @@ namespace MVC.Controllers
         }
 
         [HttpGet]
-        public JsonResult GetSubjects()
+        [Route("MVCSyllabus/CreateSyllabus/{cwsid}")]
+        public IActionResult CreateSyllabus(int cwsid)
         {
-            // List to hold subject data
-            var subjects = new List<Subject>();
 
-            // Connect to the database and fetch subjects (assuming you have a "t_subjects" table)
-            using (var connection = new NpgsqlConnection(connectionString))
-            {
-                connection.Open();
-
-                // Query to get subjects (you can adjust the query as per your actual table structure)
-                using (var command = new NpgsqlCommand("SELECT c_Subject_ID, c_Subject_Name FROM t_subjects ORDER BY c_Subject_Name;", connection))
-                using (var reader = command.ExecuteReader())
-                {
-                    // Read data and populate the subject list
-                    while (reader.Read())
-                    {
-                        subjects.Add(new Subject
-                        {
-                            Id = (int)reader["c_Subject_ID"],
-                            Name = (string)reader["c_Subject_Name"]
-                        });
-                    }
-                }
-            }
-
-            return Json(subjects);
-        }
-
-        [HttpGet]
-        public JsonResult GetStandards()
-        {
-            var standards = new List<Standard>();
-
-            using (var connection = new NpgsqlConnection(connectionString))
-            {
-                connection.Open();
-
-                using (var command = new NpgsqlCommand("SELECT c_standard FROM t_standards ORDER BY c_standard;", connection))
-                using (var reader = command.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        standards.Add(new Standard
-                        {
-                            standard = reader["c_standard"].ToString(),
-                        });
-                    }
-                }
-            }
-
-            return Json(standards);
-        }
-
-        [HttpPost]
-        public IActionResult CreateSyllabus(Syllabus syllabus)
-        {
-            int id = 0;
+            Console.WriteLine("creating");
+            Console.WriteLine("cwsid = " + cwsid);
             // int? id = HttpContext.Session.GetInt32("user_id");
-            int cwsid = 0;
             using (var connection = new NpgsqlConnection(connectionString))
             {
                 connection.Open();
-                var command = new NpgsqlCommand("select c_teacher_id from t_teachers where c_user_id = @id;", connection);
-                command.Parameters.AddWithValue("@id", id!);
-                int teacherId = (int)command.ExecuteScalar()!;
-
-                using (command = new NpgsqlCommand("INSERT INTO t_Syllabus (c_CWSID, c_chapterName, c_start, c_end, c_completed) VALUES (@CWSID, @ChapterName, @Start, @End, @Completed) RETURNING c_SyllabusID", connection))
+                using (var command = new NpgsqlCommand("INSERT INTO t_Syllabus (c_CWSID, c_chapterName, c_start, c_end, c_completed) VALUES (@CWSID, @ChapterName, @Start, @End, @Completed) RETURNING c_SyllabusID", connection))
                 {
                     command.Parameters.AddWithValue("@CWSID", cwsid);
                     command.Parameters.AddWithValue("@ChapterName", "");
                     command.Parameters.AddWithValue("@Start", DateTime.Now);
                     command.Parameters.AddWithValue("@End", DateTime.Now);
                     command.Parameters.AddWithValue("@Completed", 0);
-                    syllabus.SyllabusID = (int)command.ExecuteScalar()!;
+                    int SyllabusID = (int)command.ExecuteScalar()!;
+                    if (SyllabusID == 1)
+                    {
+                        return Ok("Syllabus Created");
+                    }
+                    else
+                    {
+                        return BadRequest();
+                    }
                 }
             }
-            return Ok();
         }
 
         [HttpPost]
@@ -240,11 +268,6 @@ namespace MVC.Controllers
         {
             syllabus.Start = syllabus.Start == DateTime.MinValue ? DateTime.Now : syllabus.Start;
             syllabus.End = syllabus.End == DateTime.MinValue ? DateTime.Now.AddDays(7) : syllabus.End;
-
-            Console.WriteLine("in update");
-            Console.WriteLine(syllabus.SyllabusID);
-            Console.WriteLine(syllabus.Start);
-            Console.WriteLine(syllabus.End);
             using (var connection = new NpgsqlConnection(connectionString))
             {
                 connection.Open();

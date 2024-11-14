@@ -9,95 +9,55 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = MVC
 build_property.RootNamespace = MVC
-build_property.ProjectDir = F:\! kalash\Diwali-Project\MVC\
+build_property.ProjectDir = D:\! Kalash\Tasks\Project\Diwali\MVC\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 8.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = F:\! kalash\Diwali-Project\MVC
+build_property.MSBuildProjectDirectory = D:\! Kalash\Tasks\Project\Diwali\MVC
 build_property._RazorSourceGeneratorDebug = 
 
-[F:/\! kalash/Diwali-Project/MVC/Views/Admin/AdmitStudents.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQWRtaXRTdHVkZW50cy5jc2h0bWw=
-build_metadata.AdditionalFiles.CssScope = 
-
-[F:/\! kalash/Diwali-Project/MVC/Views/Admin/HireTeachers.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cSGlyZVRlYWNoZXJzLmNzaHRtbA==
-build_metadata.AdditionalFiles.CssScope = 
-
-[F:/\! kalash/Diwali-Project/MVC/Views/Admin/Index.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cSW5kZXguY3NodG1s
-build_metadata.AdditionalFiles.CssScope = 
-
-[F:/\! kalash/Diwali-Project/MVC/Views/Admin/ManageClasswiseSubjects.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cTWFuYWdlQ2xhc3N3aXNlU3ViamVjdHMuY3NodG1s
-build_metadata.AdditionalFiles.CssScope = 
-
-[F:/\! kalash/Diwali-Project/MVC/Views/Admin/ManageFeeStructure.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cTWFuYWdlRmVlU3RydWN0dXJlLmNzaHRtbA==
-build_metadata.AdditionalFiles.CssScope = 
-
-[F:/\! kalash/Diwali-Project/MVC/Views/Admin/ManageSchoolInfo.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cTWFuYWdlU2Nob29sSW5mby5jc2h0bWw=
-build_metadata.AdditionalFiles.CssScope = 
-
-[F:/\! kalash/Diwali-Project/MVC/Views/Admin/ManageStandard.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cTWFuYWdlU3RhbmRhcmQuY3NodG1s
-build_metadata.AdditionalFiles.CssScope = 
-
-[F:/\! kalash/Diwali-Project/MVC/Views/Admin/ManageSubjects.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cTWFuYWdlU3ViamVjdHMuY3NodG1s
-build_metadata.AdditionalFiles.CssScope = 
-
-[F:/\! kalash/Diwali-Project/MVC/Views/Admin/StudentDetails.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cU3R1ZGVudERldGFpbHMuY3NodG1s
-build_metadata.AdditionalFiles.CssScope = 
-
-[F:/\! kalash/Diwali-Project/MVC/Views/Admin/TeacherDetails.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cVGVhY2hlckRldGFpbHMuY3NodG1s
-build_metadata.AdditionalFiles.CssScope = 
-
-[F:/\! kalash/Diwali-Project/MVC/Views/Admin/ViewFeedback.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cVmlld0ZlZWRiYWNrLmNzaHRtbA==
-build_metadata.AdditionalFiles.CssScope = 
-
-[F:/\! kalash/Diwali-Project/MVC/Views/Home/Index.cshtml]
+[D:/\! Kalash/Tasks/Project/Diwali/MVC/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[F:/\! kalash/Diwali-Project/MVC/Views/Home/Privacy.cshtml]
+[D:/\! Kalash/Tasks/Project/Diwali/MVC/Views/Home/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[F:/\! kalash/Diwali-Project/MVC/Views/MVCSyllabus/Index.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTVZDU3lsbGFidXNcSW5kZXguY3NodG1s
+[D:/\! Kalash/Tasks/Project/Diwali/MVC/Views/MVCSyllabus/Gantt.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTVZDU3lsbGFidXNcR2FudHQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[F:/\! kalash/Diwali-Project/MVC/Views/MVCSyllabus/Test.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTVZDU3lsbGFidXNcVGVzdC5jc2h0bWw=
-build_metadata.AdditionalFiles.CssScope = 
-
-[F:/\! kalash/Diwali-Project/MVC/Views/MVCSyllabus/TimeLine.cshtml]
+[D:/\! Kalash/Tasks/Project/Diwali/MVC/Views/MVCSyllabus/TimeLine.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTVZDU3lsbGFidXNcVGltZUxpbmUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[F:/\! kalash/Diwali-Project/MVC/Views/Shared/Error.cshtml]
+[D:/\! Kalash/Tasks/Project/Diwali/MVC/Views/Shared/Admin.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEFkbWluLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/\! Kalash/Tasks/Project/Diwali/MVC/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[F:/\! kalash/Diwali-Project/MVC/Views/Shared/_ValidationScriptsPartial.cshtml]
+[D:/\! Kalash/Tasks/Project/Diwali/MVC/Views/Shared/Student.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXFN0dWRlbnQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/\! Kalash/Tasks/Project/Diwali/MVC/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[F:/\! kalash/Diwali-Project/MVC/Views/_ViewImports.cshtml]
+[D:/\! Kalash/Tasks/Project/Diwali/MVC/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[F:/\! kalash/Diwali-Project/MVC/Views/_ViewStart.cshtml]
+[D:/\! Kalash/Tasks/Project/Diwali/MVC/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[F:/\! kalash/Diwali-Project/MVC/Views/Shared/_Layout.cshtml]
+[D:/\! Kalash/Tasks/Project/Diwali/MVC/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = b-q0a04yuu0e

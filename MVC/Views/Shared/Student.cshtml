@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2023.1.223/styles/kendo.default-v2.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2023.1.223/js/kendo.all.min.js"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/kendo/dist/css/kendo.common.min.css" />
+    <link rel="stylesheet" href="~/lib/kendo/dist/css/kendo.default.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/MVC.styles.css" asp-append-version="true" />
+    <style>
+        /* Navbar styling */
+        #navbar {
+            position: sticky;
+            top: 0;
+            width: 100%;
+            height: 60px;
+            background-color: #3f51b5;
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            box-sizing: border-box;
+            z-index: 1000;
+        }
+
+        #navbar h1 {
+            font-size: 20px;
+            color: #FFD700;
+            margin-right: auto;
+        }
+
+        .navbar-toggle {
+            cursor: pointer;
+            font-size: 24px;
+            margin-right: 20px;
+        }
+
+        /* Search bar styling */
+        .navbar-search {
+            flex: 1;
+            max-width: 300px;
+            margin-right: 20px;
+        }
+
+        .navbar-search input {
+            width: 100%;
+            padding: 5px 10px;
+            border-radius: 4px;
+            border: none;
+            font-size: 14px;
+        }
+
+        .notification-icon {
+            font-size: 20px;
+            cursor: pointer;
+            margin-right: 20px;
+        }
+
+        /* Layout styling */
+        #wrapper {
+            display: flex;
+            height: calc(100vh - 60px);
+            overflow: hidden;
+        }
+
+        /* Sidebar styling */
+        #sidebar {
+            width: 200px;
+            background-color: #fff;
+            color: #333;
+            padding: 20px 0;
+            box-sizing: border-box;
+            border-right: 1px solid #ddd;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: width 0.3s;
+        }
+
+        #sidebar.collapsed {
+            display: none;
+        }
+
+        /* Sidebar profile styling */
+        #profile {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #profile img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+
+        #profile p {
+            margin: 0;
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* Sidebar menu styling */
+        #sidebar ul {
+            list-style: none;
+            padding: 0;
+            width: 100%;
+            text-align: center;
+        }
+
+        #sidebar ul li {
+            padding: 15px;
+            cursor: pointer;
+            font-size: 16px;
+            color: #333;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+        }
+
+        #sidebar ul li:hover {
+            background-color: #f0f0f0;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        #sidebar ul li i {
+            margin-right: 10px;
+        }
+
+        /* Main content styling */
+        #mainContent {
+            flex: 1;
+            padding: 20px;
+            background-color: #f5f5f5;
+            overflow-y: auto;
+            transition: margin-left 0.3s;
+        }
+
+        /* Section styling */
+        .section {
+            padding: 20px;
+            background-color: #ffffff;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="navbar">
+        <span class="navbar-toggle k-icon k-i-menu" id="toggleSidebar"></span>
+        <h1> The Wonderfull School </h1>
+    </div>
+
+    <div id="wrapper">
+        <div id="sidebar">
+            <div id="profile">
+                <a href="http://localhost:5255/Student/Profile"> <img src="https://via.placeholder.com/80"
+                        alt="Student Photo"> </a>
+                <p>Kalash</p>
+                <p>kalash.shah@gmail.com</p>
+            </div>
+            <ul id="menu">
+                <a href="http://localhost:5255/MVCSyllabus/Syllabus">
+                    <li data-target="#studentInfoSection"><i class="k-icon k-i-shape-circle"></i>View Syllabus </li>
+                </a>
+
+                <a href="http://localhost:5255/MVCSyllabus/TimeTable">
+                    <li data-target="#studentInfoSection"><i class="k-icon k-i-shape-circle"></i>View Time Table</li>
+                </a>
+
+                <a href="http://localhost:5255/">
+                    <li data-target="#studentInfoSection"><i class="k-icon k-i-shape-circle"></i>Manage Syllabus</li>
+                </a>
+
+                <a href="http://localhost:5255/Student/Material">
+                    <li data-target="#studentInfoSection"><i class="k-icon k-i-shape-circle"></i>View Material</li>
+                </a>
+
+                <a href="http://localhost:5255/Student/Fees">
+                    <li data-target="#studentInfoSection"><i class="k-icon k-i-shape-circle"></i>Pay Fees</li>
+                </a>
+
+                <a href="http://localhost:5255/Student/Feedback">
+                    <li data-target="#studentInfoSection"><i class="k-icon k-i-shape-circle"></i>Feedback</li>
+                </a>
+
+                <a href="http://localhost:5255/Student/School">
+                    <li data-target="#studentInfoSection"><i class="k-icon k-i-shape-circle"></i>School Details</li>
+                </a>
+            </ul>
+        </div>
+
+        <div id="mainContent">
+            @RenderBody()
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $('#toggleSidebar').click(function () {
+                $('#sidebar').toggleClass('collapsed');
+                $('#mainContent').css('flex', $('#sidebar').hasClass('collapsed') ? '2' : '1');
+            });
+
+            $("#menu li").click(function () {
+                const targetSection = $($(this).data("target"));
+                $("html, body").animate({
+                    scrollTop: targetSection.offset().top - 60
+                }, 500);
+            });
+        });
+    </script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/kendo/dist/js/kendo.all.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+</body>
+</html>

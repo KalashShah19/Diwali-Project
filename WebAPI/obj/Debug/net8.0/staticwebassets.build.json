@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "CYdKKkG/gB/DQcfpiJqE6T5+oVc8LbJG5g+V6YzUTjo=",
+  "Hash": "aWunUgI/NrR578+g8PZ+Xz3xwwKelvVvpR3jTdiNjFQ=",
   "Source": "WebAPI",
   "BasePath": "_content/WebAPI",
   "Mode": "Default",
@@ -10,30 +10,10 @@
     {
       "Name": "WebAPI\\wwwroot",
       "Source": "WebAPI",
-      "ContentRoot": "F:\\! kalash\\Diwali-Project\\WebAPI\\wwwroot\\",
+      "ContentRoot": "D:\\! Kalash\\Tasks\\Project\\Diwali\\WebAPI\\wwwroot\\",
       "BasePath": "_content/WebAPI",
       "Pattern": "**"
     }
   ],
-  "Assets": [
-    {
-      "Identity": "F:\\! kalash\\Diwali-Project\\WebAPI\\wwwroot\\SchoolData\\principal.png",
-      "SourceId": "WebAPI",
-      "SourceType": "Discovered",
-      "ContentRoot": "F:\\! kalash\\Diwali-Project\\WebAPI\\wwwroot\\",
-      "BasePath": "_content/WebAPI",
-      "RelativePath": "SchoolData/principal.png",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "AssetMergeBehavior": "PreferTarget",
-      "AssetMergeSource": "",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\SchoolData\\principal.png"
-    }
-  ]
+  "Assets": []
 }

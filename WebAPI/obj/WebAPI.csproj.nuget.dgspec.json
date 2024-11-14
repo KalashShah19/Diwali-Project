@@ -1,20 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "F:\\! kalash\\Diwali-Project\\WebAPI\\WebAPI.csproj": {}
+    "D:\\! Kalash\\Tasks\\Project\\Diwali\\WebAPI\\WebAPI.csproj": {}
   },
   "projects": {
-    "F:\\! kalash\\Diwali-Project\\WebAPI\\WebAPI.csproj": {
+    "D:\\! Kalash\\Tasks\\Project\\Diwali\\WebAPI\\WebAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "F:\\! kalash\\Diwali-Project\\WebAPI\\WebAPI.csproj",
+        "projectUniqueName": "D:\\! Kalash\\Tasks\\Project\\Diwali\\WebAPI\\WebAPI.csproj",
         "projectName": "WebAPI",
-        "projectPath": "F:\\! kalash\\Diwali-Project\\WebAPI\\WebAPI.csproj",
-        "packagesPath": "C:\\Users\\jaina\\.nuget\\packages\\",
-        "outputPath": "F:\\! kalash\\Diwali-Project\\WebAPI\\obj\\",
+        "projectPath": "D:\\! Kalash\\Tasks\\Project\\Diwali\\WebAPI\\WebAPI.csproj",
+        "packagesPath": "C:\\Users\\intern035\\.nuget\\packages\\",
+        "outputPath": "D:\\! Kalash\\Tasks\\Project\\Diwali\\WebAPI\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
         "configFilePaths": [
-          "C:\\Users\\jaina\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\intern035\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
