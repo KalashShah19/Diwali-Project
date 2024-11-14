@@ -438,6 +438,24 @@ public class AdminController : ControllerBase
         }
     }
 
+    [HttpGet("GetWorkingTeacherDetails")]
+    [Produces("application/json")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public IActionResult GetWorkingTeacherDetails()
+    {
+        try
+        {
+            List<Teacher.TeacherDetails> teachers = teacherRepository.GetWorkingTeacherList();
+            return StatusCode(StatusCodes.Status200OK, teachers);
+        }
+        catch (Exception e)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+        }
+    }
+
     [HttpGet("GetJobRequests")]
     [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status200OK)]

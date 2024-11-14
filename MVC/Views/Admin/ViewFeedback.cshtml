@@ -33,7 +33,7 @@
             },
             columns: [
                 { field: "feedbackDate", title: "Feedback Date", template: (option) => new Date(Date.parse(option.feedbackDate)).toLocaleDateString("en-gb") },
-                { field: "teacherId", title: "Teacher Name" },
+                { field: "teacherName", title: "Teacher Name" },
                 { field: "rating", title: "Ratings" },
                 { field: "comment", title: "Comment", template: (options) => options.comment ? options.comment : "No Comment", sortable: false },
                 { field: "batchYear", title: "Batch Year" }
