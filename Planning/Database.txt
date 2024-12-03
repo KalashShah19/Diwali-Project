@@ -1,0 +1,100 @@
+Database
+
+Users
+    userID
+    Name
+    Email
+    Password
+    MobileNumber
+    Gender
+    DOB
+    Address
+    Image
+    Verified
+    Role - Admin Teacher Student 
+
+Student
+    userID
+    enrollmentNumber
+    Class
+    AdmissionDate
+    studying
+
+Teacher
+    userID
+    teacherId
+    Education
+    standard
+    working
+    joiningDate
+
+Material
+    materialID
+    materialName
+    standardID
+    subjectID
+    uploadTime
+    dueDate (nullable)
+    file
+    totalGrades
+    materialType - Assignment /  Material
+
+Assignment  
+    assignmentID
+    fileName
+    userID - Student
+    date
+    grades
+
+Subject
+    subjectID
+    subjectName
+
+Standard
+    standard
+
+ClassWiseSubjects
+    CWSID
+    subjectID
+    Teacherid
+    standard
+
+TimeTable
+    Time
+    CWSID
+    Day
+
+Fees
+    feesID
+    Amount
+    Year
+    standardID
+
+Syllabus
+    CWSID
+    chapterName
+    startDate
+    endDate
+    status
+
+SchoolInfo 
+    Name (Not Database)
+    Address 
+    ContactNumber
+    Principal
+    PrincipalQualification
+    Trustee (Not Database)
+    Trust (Not Database)
+    PrincipalProfile
+    TrusteePhoto (Not Database)
+    Email
+    AffliliationNumber (Not Database)
+    Website
+    EstablishmentDate (Not Database)
+    
+Feedback
+    userID - Teacher
+    userID - Student
+    rating (out of 5)
+    comment
+    date

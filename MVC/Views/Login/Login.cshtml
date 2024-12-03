@@ -1,0 +1,598 @@
+@model WebAPI.Models.Login
+
+@{
+    Layout = "_CustomLayout";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+
+
+    <!-- Kendo UI and jQuery CSS & JS files -->
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/VERSION/styles/kendo.default-v2.min.css">
+    <link href="https://kendo.cdn.telerik.com/2024.3.1204/styles/kendo.default-v2.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/VERSION/js/kendo.all.min.js"></script>
+    @* ------ *@
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/kendo/dist/css/kendo.common.min.css" />
+    <link rel="stylesheet" href="~/lib/kendo/dist/css/kendo.default.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/MVC.styles.css" asp-append-version="true" />
+    <script src="https://kendo.cdn.telerik.com/2024.3.1204/js/kendo.captcha.min.js"></script>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
+
+
+
+    <head>
+        <link href="https://kendo.cdn.telerik.com/2024.3.1104/styles/kendo.default-v2.min.css" rel="stylesheet" />
+
+    </head>
+
+
+
+
+
+    <style>
+        body {
+            background-color: #b6d4f1;
+        }
+
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 30px;
+            background-color: #ffffff;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            border: 1px solid #e3e6eb;
+        }
+
+        .login-container h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: bold;
+            color: #343a40;
+        }
+
+        .k-textbox {
+            border: none;
+            margin: 0 !important;
+        }
+
+        #captchaInput,
+        #forgotPasswordEmail {
+            border: 1px solid #CED4DA !important;
+            background-color: #f9fafb;
+            margin: 0 !important;
+        }
+
+        .k-textbox input {
+            width: 100%;
+            font-size: 15px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            color: #495057;
+            background-color: #f9fafb;
+            box-shadow: none;
+
+        }
+
+        .k-textbox input:focus {
+            border-color: #007bff;
+            box-shadow: 0px 0px 5px rgba(0, 123, 255, 0.25);
+
+        }
+
+        .k-textbox input::placeholder {
+            color: #adb5bd;
+        }
+
+        .k-button {
+            width: 100%;
+            background-color: #577ea8;
+            color: #ffffff;
+            font-weight: bold;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+            margin-top: 15px;
+        }
+
+        .reload {
+            display: block !important;
+            padding: 0 !important;
+            height: 50px;
+            width: 50px;
+            text-align: center;
+        }
+
+        .k-button:hover {
+            background-color: #63ada1;
+            transform: scale(1.05);
+            box-shadow: 0px 4px 12px rgba(0, 91, 187, 0.3), 0 0 8px rgba(0, 91, 187, 0.6);
+        }
+
+
+
+
+        #notification {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        .k-notification-success {
+            background-color: #a5dc86;
+            color: rgb(255, 255, 255);
+            border-radius: 8px;
+
+            font-size: 16px;
+            padding: 20px;
+            margin: -29px !important;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .k-notification-error {
+
+            background-color: #f27474;
+            color: rgb(255, 255, 255);
+            border-radius: 8px;
+
+            font-size: 16px;
+            padding: 20px;
+            margin: -29px !important;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        #notification {
+            position: fixed;
+            top: 80px;
+            right: 50px;
+            z-index: 9999;
+            width: auto;
+
+        }
+
+        .k-notification .k-icon {
+            font-size: 24px;
+            vertical-align: middle;
+            margin-right: 3px;
+        }
+
+        .text-center a {
+            color: #007bff;
+            font-weight: bold;
+            text-decoration: none;
+            position: relative;
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .text-center a:hover {
+            color: #007bff;
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3), 0 6px 12px rgba(0, 123, 255, 0.2);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="content-wrapper">
+        <div class="login-container">
+            <h2>Login</h2>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <input asp-for="Email" class="k-textbox" type="email" placeholder="Email" id="email" />
+                    <span id="emailError" class="text-danger" style="display:none;">Please enter a valid email.</span>
+                </div>
+
+                <div class="form-group">
+                    <input asp-for="Password" class="k-textbox" type="password" placeholder="Password" id="password" />
+                    <span id="passwordError" class="text-danger" style="display:none;">Please enter your
+                        password.</span>
+                </div>
+
+                <div class="d-flex justify-content-center">
+                    <div id="captcha" class="k-captcha-image"> </div>
+                    <button type="button" id="generateCaptchaButton" class="k-button reload">
+                        <span class="k-icon k-i-reset"></span>
+                    </button>
+                </div>
+
+                <input type="text" id="captchaInput" class="k-textbox" placeholder="Enter CAPTCHA" />
+                <span id="captchaError" class="text-danger" style="display:none;">Please enter the CAPTCHA.</span>
+
+                <button id="loginButton" type="button" class="k-button k-primary">Login</button>
+            </form>
+
+            <div id="forgotPasswordDialog">
+                <p>Please enter your email to reset your password.</p>
+
+                <input asp-for="Email" id="forgotPasswordEmail" class="k-textbox" type="email" placeholder="Email"
+                    id="email" />
+
+
+            </div>
+            <div class="text-center mt-3">
+                <p>
+                    <a href="javascript:void(0);" id="forgotPasswordLink" class="text-decoration-none">Forgot
+                        Password</a>
+
+                </p>
+            </div>
+            <div class="text-center mt-3">
+                <p>
+                    <a href="/" class="text-decoration-none">Back to Home Page</a> |
+                    <a href="/Login/Register" class="text-decoration-none">Go to Register Page</a>
+                </p>
+            </div>
+        </div>
+
+        <div id="notification"></div>
+        <div id="loader" style="display: none;">
+            <div class="ball"></div>
+            <div class="ball"></div>
+            <div class="ball"></div>
+
+
+        </div>
+
+    </div>
+
+
+
+    <script>
+
+        $(document).ready(function () {
+
+            $("#email").on("input", function () {
+                const emailValue = $(this).val().trim();
+                const emailPattern = /^[^@@\s]+@@[^@@\s]+\.[^@@\s]+$/;
+
+                if (emailValue === "" || !emailPattern.test(emailValue)) {
+                    $("#emailError").show();
+                } else {
+                    $("#emailError").hide();
+                }
+            });
+
+
+            $("#password").on("input", function () {
+                const passwordValue = $(this).val().trim();
+
+                if (passwordValue === "") {
+                    $("#passwordError").show();
+                } else {
+                    $("#passwordError").hide();
+                }
+            });
+
+
+            $("#captchaInput").on("input", function () {
+                const captchaValue = $(this).val().trim();
+
+                if (captchaValue === "") {
+                    $("#captchaError").show();
+                } else {
+                    $("#captchaError").hide();
+                }
+            });
+
+
+
+            var notification = $("#notification").kendoNotification({
+                appendTo: "#notification",
+                autoHideAfter: 2000,
+                templates: [
+                    {
+                        type: "success",
+                        template: "<div class='k-notification-success'><span class='k-icon k-i-check'></span> #= message #</div>"
+                    },
+                    {
+                        type: "error",
+                        template: "<div class='k-notification-error'><span class='k-icon k-i-warning'></span> #= message #</div>"
+                    }
+                ]
+            }).data("kendoNotification");
+
+            $(document).ajaxStart(function () {
+                $("#loader").show();
+                $(".login-container").addClass("blur");
+            }).ajaxStop(function () {
+                $("#loader").hide();
+                $(".login-container").removeClass("blur");
+            });
+
+
+            var generatedCaptchaText = "";
+
+            var forgotPasswordDialog = $("#forgotPasswordDialog").kendoDialog({
+                width: "300px",
+                title: "Forgot Password",
+                closable: false,
+                modal: true,
+                visible: false,
+                actions: [
+                    {
+                        text: 'Cancel',
+                        action: function () {
+
+                            $("#forgotPasswordEmail").val('');
+                        }
+                    },
+                    {
+                        text: 'Submit',
+                        action: function () {
+                            var email = $("#forgotPasswordEmail").val();
+                            if (!email) {
+
+                                notification.show({ message: "Please fill Email fields" }, "error");
+                                $("#forgotPasswordEmail").val("");
+                                return;
+                            }
+
+                            var loaderContainer = $("#forgotPasswordDialog"); // Or any container element for your dialog
+                            kendo.ui.progress(loaderContainer, true)
+
+
+                            if (email) {
+
+
+                                $.ajax({
+                                    url: "http://localhost:5064/api/Login/RequestPasswordChange",
+                                    type: "POST",
+                                    contentType: "application/json",
+                                    data: JSON.stringify(email),
+                                    success: function (response) {
+                                        console.log(response, "Emailresponseresponse");
+                                        localStorage.setItem("otp", response?.otp);
+                                        localStorage.setItem("email", email);
+                                        notification.show({ message: response?.message }, "success");
+                                        if (response?.success === true) {
+                                            setTimeout(function () {
+                                                window.location.href = "/Login/Forgotpassword";
+                                            }, 1000);
+                                        }
+                                    },
+                                    error: function (error) {
+
+                                        notification.show({ message: "Invalid email" }, "error");
+                                    }, acceptscomplete: function () {
+                                        // Hide the Kendo UI Loader (Progress)
+                                        kendo.ui.progress(loaderContainer, false); // Hide the progress (spinner)
+                                    }
+
+                                });
+
+
+                            } else {
+
+                                notification.show({ message: "Please enter a valid email address." }, "error");
+                            }
+                        }
+                    }
+                ]
+            }).data("kendoDialog");
+
+
+            $("#forgotPasswordLink").on("click", function () {
+                forgotPasswordDialog.open();
+            });
+
+            forgotPasswordDialog.bind("close", function () {
+                $("#forgotPasswordEmail").val('');
+            });
+
+
+
+
+
+            $("#captcha").kendoCaptcha({
+                type: "image",
+                autoRefresh: true,
+                audioButton: true,
+                value: "",
+                messages: {
+                    "invalidCaptcha": "Please enter the correct CAPTCHA."
+                },
+                handler: function () {
+                    var captchaValue = $("#captcha").data("kendoCaptcha").value();
+
+                    $.ajax({
+                        url: "http://localhost:5064/api/Login/GetCaptcha",
+                        type: "POST",
+                        contentType: "application/json",
+                        data: JSON.stringify({ captcha: captchaValue }),
+                        success: function (response) {
+                            console.log(generatedCaptchaText, response.captchatext, response)
+                            if (response.captcha) {
+                                generatedCaptchaText = response.catpchatext;
+
+                                var Captcha = "http://localhost:5064" + "/captcha/" + response.captchaID + ".png";
+                                console.log(Captcha)
+
+                                $(".k-captcha-image-wrap").empty().append($('<img>', {
+                                    src: Captcha,
+                                    alt: 'CAPTCHA Image',
+                                }));
+                            } else {
+                                notification.show({ message: "CAPTCHA validation failed!" }, "error");
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("Error during CAPTCHA validation:", error);
+                        }
+                    });
+                }
+            });
+
+            $("#email").kendoTextBox({
+                placeholder: "Email",
+                label: "Email"
+            });
+
+            $("#password").kendoTextBox({
+                placeholder: "Password",
+                label: "Password"
+            });
+
+            $('#generateCaptchaButton').on('click', function (e) {
+                e.preventDefault();
+                generateCaptcha(e);
+            });
+            function generateCaptcha(e) {
+                e.preventDefault();
+                var captchaValue = $("#captcha").data("kendoCaptcha").value();
+                $.ajax({
+                    url: "http://localhost:5064/api/Login/GetCaptcha",
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify({ captcha: captchaValue }),
+                    success: function (response) {
+
+                        console.log(response)
+                        if (response.captcha) {
+                            generatedCaptchaText = response.catpchatext;
+                            var Captcha = "http://localhost:5064" + "/captcha/" + response.captchaID + ".png";
+
+                            $(".k-captcha-image-wrap").empty().append($('<img>', {
+                                src: Captcha,
+                                alt: 'CAPTCHA Image',
+                            }));
+                        } else {
+                            notification.show({ message: "CAPTCHA validation failed!" }, "error");
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error during CAPTCHA validation:", error);
+                    }
+                });
+            }
+
+            $("#loginButton").click(function () {
+                let hasError = false;
+
+                if ($("#email").val().trim() === "") {
+                    $("#emailError").show();
+                    hasError = true;
+                } else {
+                    $("#emailError").hide();
+                }
+
+
+                if ($("#password").val().trim() === "") {
+                    $("#passwordError").show();
+                    hasError = true;
+                } else {
+                    $("#passwordError").hide();
+                }
+
+                if ($("#captchaInput").val().trim() === "") {
+                    $("#captchaError").show();
+                    hasError = true;
+                }
+                else {
+                    $("#captchaError").hide();
+                }
+
+                if (!hasError) {
+                    var email = $("#email").val();
+                    var password = $("#password").val();
+                    var captchaValue = $("#captchaInput").val();
+                    console.log(generatedCaptchaText, captchaValue, "=====> generatedCaptchaText")
+                    var user = {
+                        "Email": email,
+                        "Password": password
+                    };
+
+                    if (generatedCaptchaText !== captchaValue) {
+
+                        $("#captchaError").show();
+                        notification.show({ message: "Please enter the CAPTCHA correctly." }, "error");
+                        $("#captchaInput").val("");
+                        generateCaptcha(event);
+                        hasError = true;
+                    }
+                    else {
+
+
+                        $.ajax({
+                            url: "http://localhost:5064/api/Login/Login",
+                            type: "POST",
+                            contentType: "application/json",
+                            data: JSON.stringify(user),
+                            success: function (response) {
+                                console.log(response?.c_user_id, "responseresponse")
+                                const c_user_id = response.c_user_id;
+                                if (c_user_id !== null) {
+                                    localStorage.setItem("c_user_id", c_user_id);
+        @* HttpContext.Session.SetString("UserId", c_user_id.ToString()); *@
+                                        notification.show({ message: "Login successful" }, "success");
+                                    setTimeout(function () {
+                                        window.location.href = "/Student/";
+                                    }, 1000);
+                                } else {
+                                    alert("Login failed!");
+                                    $("#loader").hide();
+                                    $(".login-container").removeClass("blur");
+                                    $("#captchaInput").val("");
+                                    generateCaptcha(event);
+                                }
+
+                            },
+                            error: function (error) {
+                                $("#loader").hide();  // Hide loader when error occurs
+                                $(".login-container").removeClass("blur");
+                                $("#captchaInput").val("");
+                                generateCaptcha(event);
+
+                                notification.show({ message: "Invalid email or password." }, "error");
+                            }
+                        });
+
+
+                    }
+                } else {
+                    $("#loader").hide();  // Hide loader when error occurs
+                    $(".login-container").removeClass("blur");
+                    notification.show({ message: "Please fill all required fields." }, "error");
+                }
+
+
+        @* if (generatedCaptchaText !== captchaValue) {
+
+                    notification.show({ message: "CAPTCHA." }, "error");
+                    $("#captchaInput").val("");
+                    generateCaptcha(event);
+                    return;
+                }
+
+                if (!email || !password || !captchaValue) {
+
+                    notification.show({ message: "Please fill all fields and complete the CAPTCHA." }, "error");
+                    $("#captchaInput").val("");
+                    generateCaptcha(event);
+                    return;
+                } *@
+
+
+            });
+        });
+    </script>
+
+</body>
+
+</html>

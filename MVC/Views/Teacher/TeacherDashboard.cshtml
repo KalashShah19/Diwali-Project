@@ -1,0 +1,345 @@
+
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "Teacher";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        .cards-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .image-large {
+
+            width: 100%;
+        }
+
+        .k-card {
+            width: 25%;
+            /* 100% / 4 - to fit 4 cards in a row */
+            margin: 1%;
+            /* Adjusts spacing between cards */
+        }
+
+        .k-card-horizontal .image-large {
+            max-width: 100%;
+        @*
+            max-height:
+            50%;
+            *@
+        }
+
+        .k-card-action>.k-button {
+            width: 100%;
+        }
+
+        .k-card-separator {
+            flex: 0 0 auto;
+        }
+
+        .k-actions-stretched {
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+
+        .k-actions {
+            padding: 0;
+            color: rgb(255, 94, 0);
+        }
+
+        .k-card-header {
+            border-color: #d5d5d5;
+            color: #ffffff;
+            background-color: #5798be;
+        }
+
+
+
+        .k-window-titlebar {
+            background-color: #5798be;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .k-picker {
+            background-color: #5798be;
+        }
+
+
+
+
+        .k-dialog-buttongroup {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+
+
+
+        .k-button {
+            width: 48%;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .k-button-primary {
+            background-color: #5798be;
+            color: #fff;
+        }
+
+        .k-button-secondary {
+            background-color: #f1f1f1;
+            color: #124732;
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <div id="notification"></div>
+
+    <div id="cards-container" class="cards-container k-rtl"></div>
+    <div id="cards-container"></div>
+
+    <!-- Modal for Editing Standard -->
+    <div id="editModal">
+        <div id="studentName"></div>
+        <select id="standardDropdownModal"></select>
+        <button id="saveButtonModal" class="k-button k-button-md k-rounded-md  k-button-primary">Save</button>
+        <button id="cancelButtonModal" class="k-button k-button-md k-rounded-md">Cancel</button>
+    </div>
+
+
+    <!-- Add HTML structure for delete confirmation modal -->
+    <div id="deleteModal" style="display: none;">
+        <p>Are you sure you want to delete this student?</p>
+        <button id="confirmDeleteButton"
+            class="k-button k-button-md k-rounded-md k-primary k-button-primary">Yes</button>
+        <button id="cancelDeleteButton" class="k-button k-button-md k-rounded-md k-button-secondary">No</button>
+    </div>
+
+
+    <script>
+        $(document).ready(function () {
+            // Initialize the Kendo Window for the edit modal
+
+            let userId = 142;
+
+            console.log("dash");
+
+            $("#notification").kendoNotification({
+                position: {
+                    pinned: true,
+                    top: 30,
+                    right: 30
+                },
+                autoHideAfter: 3000, // Notification will disappear after 3 seconds
+                stacking: "down",
+                templates: [{
+                    type: "success",
+                    template: "<div class='k-notification-success'><span class='k-icon k-i-check'></span> #: data.Message #</div>"
+                }, {
+                    type: "error",
+                    template: "<div class='k-notification-error'><span class='k-icon k-i-warning'></span> #: data.Message #</div>"
+                }]
+            });
+
+            $("#editModal").kendoWindow({
+                width: "400px",
+                title: "Edit Student",
+                visible: false,
+                modal: true
+            });
+
+            // Initialize the Kendo Window for the delete confirmation modal
+            $("#deleteModal").kendoWindow({
+                width: "300px",
+                title: "Confirm Deletion",
+                visible: false,
+                modal: true
+            });
+
+
+
+            function loadData() {
+                // Load student data when the page loads
+                $.ajax({
+                    url: 'http://localhost:5064/api/Teacher/getclassWiseStudent',
+                    method: 'GET',
+                    data: { id: userId },
+                    success: function (data) {
+                        renderCards(data);
+                    },
+                    error: function (error) {
+                        console.error("Error fetching data:", error);
+                    }
+                });
+            }
+
+            loadData();
+
+
+            function renderCards(data) {
+                const container = $('#cards-container');
+                container.empty();
+
+                data.forEach(item => {
+                    const card = $(`
+                <div class="k-card k-card-horizontal">
+                    <div class="k-actions k-card-actions k-actions-vertical k-actions-stretched" style="width: 50px; align-items: center;">
+                        <button class="k-button k-button-flat k-button-md k-rounded-md delete-button" data-id="${item.user_id}">
+                            <span class="k-icon k-i-trash"></span>
+                        </button>
+                        <span class="k-card-separator"></span>
+                        <button class="k-button k-button-flat k-button-md k-rounded-md update-button" data-id="${item.user_id}">
+                            <span class="k-icon k-i-edit"></span>
+                        </button>
+                    </div>
+                    <div>
+                        <div class="k-card-header">
+                            <h5 class="k-card-title">${item.name}</h5>
+                            <h6 class="k-card-subtitle">Standard: <span class="standard-display">${item.standard}</span></h6>
+                        </div>
+                        <img alt="${item.name} Profile" class="k-card-media image-large" src="${apihost}/${item.image}" />
+                        <div class="k-card-body">
+                            <p>
+                                <strong>Email:</strong> ${item.email} <br />
+                                <strong>Mobile:</strong> ${item.mobileNumber} <br />
+                                <strong>Birth Date:</strong> <span>${new Date(item.birthDate).toLocaleDateString()}</span><br />
+                                <strong>Address:</strong> ${item.address} <br />
+                                <strong>Fee Status:</strong> ${item.feeStatus}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            `);
+
+                    // Edit button action
+                    card.find('.update-button').on('click', function () {
+                        openEditModal(item);
+                    });
+
+                    // Delete button action
+                    card.find('.delete-button').on('click', function () {
+                        openDeleteModal(item.user_id);
+                    });
+
+                    container.append(card);
+                });
+            }
+
+            function openEditModal(item) {
+                $("#studentName").text(`Edit Standard for ${item.name}`);
+                const modal = $("#editModal").data("kendoWindow");
+                modal.center().open();
+                fetchStandards(item.standard);
+                $('#saveButtonModal').off('click').on('click', function () {
+                    const selectedStandard = $("#standardDropdownModal").data("kendoDropDownList").value();
+                    saveUpdatedStandard(item.user_id, selectedStandard);
+                    modal.close();
+                });
+                $('#cancelButtonModal').off('click').on('click', function () {
+                    modal.close();
+                });
+            }
+
+            function openDeleteModal(userId) {
+                const deleteModal = $("#deleteModal").data("kendoWindow");
+                deleteModal.center().open();
+
+                $('#confirmDeleteButton').off('click').on('click', function () {
+                    deleteUser(userId);
+                    deleteModal.close();
+                });
+
+                $('#cancelDeleteButton').off('click').on('click', function () {
+                    deleteModal.close();
+                });
+            }
+
+            function fetchStandards(currentStandard) {
+                $.ajax({
+                    url: 'http://localhost:5064/api/Teacher/Getstandards',
+                    method: 'GET',
+                    dataType: 'json',
+                    success: function (response) {
+                        $("#standardDropdownModal").kendoDropDownList({
+                            optionLabel: "Select Standard",
+                            filter: "contains",
+                            dataTextField: "text",
+                            dataValueField: "value",
+                            dataSource: response.map(standard => ({
+                                text: `Standard ${standard}`,
+                                value: `Standard ${standard}`
+                            })),
+                            value: `Standard ${currentStandard}`
+                        });
+                    },
+                    error: function () {
+                        console.error("Failed to load standards data.");
+                    }
+                });
+            }
+
+            function saveUpdatedStandard(userId, selectedStandard) {
+                $.ajax({
+                    url: `http://localhost:5064/api/Teacher/updateclassWiseStudent`,
+                    method: 'PATCH',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ id: userId, standers: selectedStandard[9], studying: true }),
+                    success: function (response) {
+                        // Show success notification using Kendo Notification
+                        $("#notification").data("kendoNotification").show({
+                            Message: response.message // Ensure 'Message' matches the server response key
+                        }, "success");
+                        loadData();
+                    },
+                    error: function (xhr, status, error) {
+                        $("#notification").data("kendoNotification").show({
+                            Message: "An error occurred while updating the student."
+                        }, "error");
+                    }
+                });
+            }
+
+            function deleteUser(userId) {
+                console.log(userId)
+                $.ajax({
+                    url: `http://localhost:5064/api/Teacher/deleteclassWiseStudent?id=${userId}`,
+                    method: 'DELETE',
+                    dataType: 'json',
+                    success: function (response) {
+                        $("#notification").data("kendoNotification").show({
+                            Message: response.message
+                        }, "success");
+                        loadData();
+                    },
+                    error: function (xhr, status, error) {
+                        $("#notification").data("kendoNotification").show({
+                            Message: "An error occurred while deleting the student."
+                        }, "error");
+                    }
+                });
+            }
+
+        });
+
+    </script>
+
+</body>
+
+</html>

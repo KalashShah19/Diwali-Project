@@ -1,0 +1,242 @@
+@{
+    ViewData["Title"] = "Manage Materials";
+    Layout = "Teacher";
+}
+
+
+<div id="example">
+    <div id="filemanager"></div>
+    <div id="pdfViewer" style="width: 100%; height: 600px; display: none;"></div>
+    <button id="closePdfViewer" style="display: none;">Close PDF Viewer</button>
+</div>
+
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            let currentPath = "";  // Track the current path to prevent redundant operations
+
+            $("#filemanager").kendoFileManager({
+                dataSource: {
+                    transport: {
+                        read: {
+                            url: "http://localhost:5064/api/Teacher/read",
+                            method: "POST",
+                            dataType: "json"
+                        },
+                        destroy:{
+                            url: "http://localhost:5064/api/Teacher/deleteMaterial?n=hello",
+                            method:"POST",
+                            dataType:"json",
+                            error:function(error){
+                                alert(error);
+                            }
+                        }
+                    }
+                    
+                },
+                uploadUrl: "http://localhost:5064/api/Teacher/upload",
+                upload:{
+                    error:function(error){
+                        console.log(error.success);
+                        alert('You do not have acces to this file');
+                    }
+                },
+                views: {
+                    tree: true,
+                    grid: true,
+                    previewPane: true
+                },
+                
+                toolbar: {
+                    items: [{ name: "upload" }]
+                },
+                navigate: onNavigate,
+                dataBound: onDataBound,
+                open: onOpen,
+                select: function (e) {
+                    console.log('i am here');
+
+                    if (e.entries && e.entries.length > 0) {
+                        const selectedFile = e.entries[0];
+                        console.log("Selected file name:", selectedFile.name);
+                        console.log("Selected file path:", selectedFile.path);
+                        console.log("Selected file size:", selectedFile.size);
+                        console.log("File extension:", selectedFile.extension);
+                        console.log("Is Directory:", selectedFile.isDirectory);
+                        console.log("Created:", selectedFile.created);
+                        console.log("Modified:", selectedFile.modified);
+                        if (selectedFile.extension === ".pdf") {
+                            const fileUrl = `http://localhost:5064/api/Teacher/download?path=${encodeURIComponent(selectedFile.path)}`;
+
+                            // Toggle display: hide file manager, show PDF viewer
+                            $("#filemanager").hide();
+                            $("#pdfViewer").show();
+                            $("#closePdfViewer").show();
+
+                            // Initialize Kendo PDF Viewer or set a new file
+                            const pdfViewer = $("#pdfViewer").data("kendoPDFViewer");
+                            if (!pdfViewer) {
+                                $("#pdfViewer").kendoPDFViewer({
+                                    pdfjsProcessing: {
+                                        file: fileUrl
+                                    },
+                                    width: "100%",
+                                    height: 600,
+                                    scale: 1.2,
+                                    toolbar: {
+                                        items: [
+                                            "pager",
+                                            "zoom",
+                                            "toggleSelection",
+                                            "download"
+                                        ]
+                                    }
+                                });
+                            } else {
+                                pdfViewer.setOptions({
+                                    pdfjsProcessing: {
+                                        file: fileUrl
+                                    }
+                                });
+                            }
+                        } else {
+                            // If non-PDF file is selected, reset and hide PDF viewer
+                            $("#pdfViewer").hide();
+                            $("#filemanager").show();
+                        }
+                    }
+                },
+                command: onCommand
+            });
+
+
+
+            function onDataBound(e) {
+                console.log("event: DataBound, path: " + e.path);
+
+                // Prevent redundant processing if data is already loaded
+                if (e.sender.dataSource._transport.ready) {
+                    console.log("Data already loaded for path: " + e.path);
+                    return;
+                }
+            }
+
+            function onNavigate(e) {
+                console.log("Navigating to: " + e.path);
+                var p = " ";
+                 const toolbar = $("#filemanager").data("kendoFileManager").toolbar;
+                 const uploadButton = toolbar.element.find(".k-upload");
+                 uploadButton.addClass("k-state-disabled"); // Adds disabled styling
+                uploadButton.attr("disabled", "disabled"); 
+
+                if(e.path) p = e.path;
+                $.ajax({
+                    url: "http://localhost:5064/api/Teacher/changePath?path=" + (e.path===""?"nodata":e.path),
+                    method: "POST",
+                    contentType: "application/json",
+                    dataType:"json",         
+                    success: function (data) {
+                        console.log(data);                    
+                    },
+                    error: function (error) {
+                        console.log(error);                   // Handle error response
+                    },
+                });
+
+                // Avoid re-triggering if the path hasn't changed
+                if (e.path === currentPath) {
+                    return;  // Don't reload if the path is the same
+                }
+
+                currentPath = e.path;
+            }
+
+            function onOpen(e) {
+                e.preventDefault();
+                if (e.entries && e.entries.length > 0) {
+                    const selectedFile = e.entries[0];
+                    console.log("Selected file name:", selectedFile.name);
+                    console.log("Selected file path:", selectedFile.path);
+                    console.log("Selected file size:", selectedFile.size);
+                    console.log("File extension:", selectedFile.extension);
+                    console.log("Is Directory:", selectedFile.isDirectory);
+                    console.log("Created:", selectedFile.created);
+                    console.log("Modified:", selectedFile.modified);
+                    if (selectedFile.extension === ".pdf") {
+                        const fileUrl = `http://localhost:5064/api/Teacher/download?path=${encodeURIComponent(selectedFile.path)}`;
+
+                        // Toggle display: hide file manager, show PDF viewer
+                        $("#filemanager").hide();
+                        $("#pdfViewer").show();
+                        $("#closePdfViewer").show();
+
+                        // Initialize Kendo PDF Viewer or set a new file
+                        const pdfViewer = $("#pdfViewer").data("kendoPDFViewer");
+                        if (!pdfViewer) {
+                            $("#pdfViewer").kendoPDFViewer({
+                                pdfjsProcessing: {
+                                    file: fileUrl
+                                },
+                                width: "100%",
+                                height: 600,
+                                scale: 1.2,
+                                toolbar: {
+                                    items: [
+                                        "pager",
+                                        "zoom",
+                                        "toggleSelection",
+                                        "download"
+                                    ]
+                                }
+                            });
+                        } else {
+                            pdfViewer.setOptions({
+                                pdfjsProcessing: {
+                                    file: fileUrl
+                                }
+                            });
+                        }
+                    } else {
+                        // If non-PDF file is selected, reset and hide PDF viewer
+                        $("#pdfViewer").hide();
+                        $("#filemanager").show();
+                    }
+                }
+            }
+
+            function showPDFViewer(file) {
+                // Hide the file manager and show the PDF viewer
+                $("#filemanager").hide();
+                $("#pdfViewer").show();
+
+                // Assuming your file is accessible via a URL
+                var fileUrl = "wwwroot/pdf/" + file.name;
+
+                // Initialize the Kendo PDF Viewer
+                $("#pdfViewer").kendoPdfViewer({
+                    pdfjsProcessing: {
+                        file: fileUrl
+                    }
+                });
+            }
+
+            function onExecute(e) {
+                console.log("event: Execute, path: " + e.path);
+            }
+
+            function onCommand(e) {
+                console.log("event: Command, context: " + e.status + ", " + e.action + ", " + e.data.item.path);
+            }
+
+            $("#closePdfViewer").click(function () {
+                $("#pdfViewer").hide();
+                $("#filemanager").show();
+                $(this).hide();  // Hide the Close button
+            });
+        });
+
+    </script>
+}

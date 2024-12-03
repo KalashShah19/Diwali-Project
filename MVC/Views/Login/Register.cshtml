@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+@{
+    Layout = "_CustomLayout";
+}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WizardExample</title>
+    <link href="https://kendo.cdn.telerik.com/themes/9.0.0/default/default-main.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2024.3.1015/js/kendo.all.min.js"></script>
+
+    <style>
+        a {
+            color: #000000;
+            font-weight: bold;
+            text-decoration: none;
+            position: relative;
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+       @* .back-to-home:hover {
+            color: #3f0e0b ;
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3), 0 6px 12px rgba(0, 123, 255, 0.2);
+        } *@
+        a:hover {
+            color: #007bff;
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3), 0 6px 12px rgba(0, 123, 255, 0.2);
+        }
+
+        
+    </style>
+</head>
+
+<body>
+
+    <div id="example" class="p-3 login-container">
+        <div class="demo-section border border-4 p-4" style="width:700px">
+            <form id="wizard" enctype="multipart/form-data" style="width:500px; margin: 0 auto;" novalidate>
+
+            </form>
+            <div class="d-flex justify-content-center homepage">
+
+            <p>
+                <a href="/" class="back-to-home">Back to Home</a> |
+                <a href="/Login/Login" class="back-to-home">Go to Login</a>
+            </p>
+          
+            </div>
+            <div class="text-center mt-3">
+        </div>
+            <div id="products"></div>
+            <div id="notification"></div>
+        </div>
+    </div>
+
+      <div id="loader" style="display: none;">
+            <div class="ball"></div>
+            <div class="ball"></div>
+            <div class="ball"></div>
+
+
+        </div>
+
+    <style>
+        #notification {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        .k-notification-success {
+            background-color: #a5dc86;
+            color: rgb(255, 255, 255);
+            border-radius: 8px;
+
+            font-size: 16px;
+            padding: 20px;
+            margin: -29px !important;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .k-notification-error {
+
+            background-color: #f27474;
+            color: rgb(255, 255, 255);
+            border-radius: 8px;
+
+            font-size: 16px;
+            padding: 20px;
+            margin: -29px !important;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        #notification {
+            position: fixed;
+            top: 80px;
+            right: 50px;
+            z-index: 9999;
+            width: auto;
+
+        }
+
+        .k-notification .k-icon {
+            font-size: 24px;
+            vertical-align: middle;
+            margin-right: 3px;
+        }
+    </style>
+    <script>
+        let isSubmitting = false;
+        let ProfileImage = null;
+        let roleValue = null;
+
+         $(document).ajaxStart(function () {
+                $("#loader").show();
+                $(".login-container").addClass("blur");
+            }).ajaxStop(function () {
+                $("#loader").hide();
+                $(".login-container").removeClass("blur");
+            });
+
+
+        var notification = $("#notification").kendoNotification({
+            appendTo: "#notification",
+            autoHideAfter: 2000,
+            templates: [
+                {
+                    type: "success",
+                    template: "<div class='k-notification-success'><span class='k-icon k-i-check'></span> #= message #</div>"
+                },
+                {
+                    type: "error",
+                    template: "<div class='k-notification-error'><span class='k-icon k-i-warning'></span> #= message #</div>"
+                }
+            ]
+        }).data("kendoNotification");
+        function initializeWizard() {
+
+
+
+
+
+            $("#wizard").kendoWizard({
+                pager: false,
+                done: function (e) {
+                    e.originalEvent.preventDefault();
+                    if (isSubmitting) return;
+                    isSubmitting = true;
+                    const formData = collectFormData();
+                    console.log(formData);
+                    $.ajax({
+                        url: "http://localhost:5064/api/Login/Register",
+                        type: "POST",
+                        processData: false,
+                        contentType: false,
+                        data: formData,
+                        success: function (response) {
+                            notification.show({ message: "Registration successful!" }, "success");
+                            setTimeout(function () {
+                                window.location.href = "/Login/Login";
+                            }, 1000);
+                            isSubmitting = false;
+                        },
+                        error: function (xhr) {
+
+                            notification.show({ message: "Registration failed: " + xhr.responseText }, "error");
+                            isSubmitting = false;
+                        }
+                    });
+                },
+                steps: [
+                    {
+                        title: "Contact Details",
+                        buttons: ["next"],
+                        form: {
+                            orientation: "vertical",
+                            items: [
+                                { field: "Name", label: "Full Name : ", validation: { required: true } },
+                                { field: "Email", label: "Email:", validation: { required: true, email: true } },
+                                { field: "MobileNumber", label: "Mobile Number:", validation: { required: true, pattern: "^[0-9]{10}$" } }
+                            ]
+                        }
+                    },
+                    {
+                        title: "Personal Details",
+                        buttons: ["previous", "next"],
+                        form: {
+                            orientation: "vertical",
+                            items: [
+                                {
+                                    field: "Gender",
+                                    label: "Gender:",
+                                    validation: { required: true },
+                                    editor: "RadioGroup",
+                                    editorOptions: {
+                                        items: ["Male", "Female"],
+                                        layout: "horizontal",
+                                        labelPosition: "before"
+                                    }
+                                },
+                                {
+                                    field: "ProfileImage",
+                                    label: "Profile Image:",
+                                    editor: function (container) {
+                                        $("<input name='ProfileImage' id='files' type='file' />")
+                                            .appendTo(container)
+                                            .kendoUpload({
+                                                multiple: false,
+                                                showFileList: true,
+                                                validation: {
+                                                    allowedExtensions: [".jpg", ".jpeg", ".png"],
+                                                    maxFileSize: 1048576
+                                                },
+                                                select: function (e) {
+                                                    const file = e.files[0];
+                                                    if (file) {
+                                                        ProfileImage = file.rawFile;
+                                                    }
+                                                }
+                                            });
+                                    },
+                                    validation: { required: true }
+                                },
+                                {
+                                    field: "BirthDate",
+                                    label: "Date of Birth:",
+                                    validation: { required: true },
+                                    editor: "DatePicker",
+                                    editorOptions: {
+                                        format: "yyyy-MM-dd",
+                                        parseFormats: ["yyyy-MM-dd"],
+                                        max: new Date(new Date().setFullYear(new Date().getFullYear() - 6)),
+                                        culture: "en-US"
+                                    }
+                                },
+                                { field: "Address", label: "Address:", validation: { required: true } },
+                               {
+    field: "Password",
+    label: "Password:",
+    validation: { required: true, minLength: 6 },
+    hint: "Hint: enter alphanumeric characters only.",
+    editor: function (container, options) {
+        $('<input type="password" id="Password" name="' + options.field + '" title="Password" required="required" autocomplete="off" aria-labelledby="Password-form-label" data-bind="value: Password" aria-describedby="Password-form-hint"/>')
+            .appendTo(container)
+            .kendoTextBox();
+
+        
+        document.getElementById("Password").addEventListener("keydown", function (event) {
+            if (!/[a-zA-Z0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "Tab") {
+                event.preventDefault(); 
+            }
+        });
+    }
+},
+{
+    field: "ConfirmPassword",
+    label: "Confirm Password:",
+    validation: {
+        required: true,
+        minLength: 6,
+        custom: function (input) {
+            if (input.is("[name='ConfirmPassword']")) {
+                const password = $("#Password").val();
+                const confirmPassword = input.val();
+                if (confirmPassword !== password) {
+                    input.attr("data-custom-msg", "Passwords do not match.");
+                    return false;
+                }
+            }
+            return true;
+        }
+    },
+    editor: function (container, options) {
+        $('<input type="password" id="ConfirmPassword" name="' + options.field + '" title="Confirm Password" required="required" autocomplete="off" aria-labelledby="ConfirmPassword-form-label" data-bind="value: ConfirmPassword" aria-describedby="ConfirmPassword-form-hint"/>')
+            .appendTo(container)
+            .kendoTextBox();
+    }
+}
+
+
+                            ]
+                        }
+                    },
+                    {
+                        title: "Role Selection",
+                        buttons: ["previous", "done"],
+                        form: {
+                            orientation: "vertical",
+                            items: [
+                                {
+                                    field: "Role",
+                                    label: "Role:",
+                                    validation: { required: true },
+                                    editor: "DropDownList",
+                                    editorOptions: {
+                                        dataSource: ["Teacher", "Student"],
+                                        optionLabel: "Select Role...",
+                                        change: onRoleChange
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }).data("kendoWizard");
+
+
+        }
+
+        function onRoleChange(e) {
+            const selectedRole = e.sender.value();
+            roleValue = selectedRole === "Student" ? 0 : 1;
+            console.log("Role value set to:", roleValue);
+        }
+
+        function collectFormData() {
+            const genderValue = $("input[name='Gender']:checked").val() === "Male" ? 0 : 1;
+
+            const formData = new FormData();
+
+            formData.append("Name", $("input[name='Name']").val());
+            formData.append("Email", $("input[name='Email']").val());
+            formData.append("MobileNumber", $("input[name='MobileNumber']").val());
+            formData.append("Gender", genderValue);
+            formData.append("BirthDate", $("input[name='BirthDate']").val());
+            formData.append("Address", $("input[name='Address']").val());
+            formData.append("Password", $("input[name='Password']").val());
+            formData.append("ConfirmPassword", $("input[name='ConfirmPassword']").val());
+            formData.append("Role", roleValue);
+
+            // Append ProfileImage only if it exists
+            if (ProfileImage) {
+                formData.append("ProfileImage", ProfileImage); // Add the file directly to FormData
+            } else {
+                formData.append("ProfileImage", ""); // Or empty string if no file is selected
+            }
+
+            console.log("FormData:", formData);
+            return formData;
+        }
+
+        initializeWizard();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,745 @@
+@{
+    ViewData["Title"] = "Time Table";
+    Layout = "Teacher";
+}
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+ <script src="/js/timetableAbmin.js"></script>
+
+    <style>
+        .k-scheduler-toolbar {
+            background-color: #5798be;
+        }
+
+        .k-views-dropdown {
+            background-color: #ade0ef;
+        }
+
+        .k-button {
+            background-color: #ade0ef;
+        }
+
+        .k-picker {
+            background-color: #5798be;
+        }
+
+        .k-picker:hover {
+            background-color: #5798be;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <h2>School Timetable</h2>
+    <label for="standardSelect">Select Standard:</label>
+    <select id="standardSelect">
+    </select>
+    <div id="scheduler"></div>
+@* 
+    <script>
+        $(document).ready(function () {
+            let data;
+            $.ajax({
+                url: 'http://localhost:5064/api/Teacher/timetable',
+                method: 'GET',
+                dataType: 'json',
+                success: function (responseData) {
+                    data = responseData;
+                    console.log(data);
+
+                    // Initialize the DropDownList with data fetched from the API
+                    $.ajax({
+                        url: 'http://localhost:5064/api/Teacher/Getstandards', // Replace with your API endpoint
+                        method: 'GET',
+                        dataType: 'json',
+                        success: function (response) {
+                            // Assuming response is an array of standards, e.g., [1, 2, 3, 4, 5]
+                            $("#standardSelect").kendoDropDownList({
+                                optionLabel: "Select Standard",
+                                filter: "contains",
+                                dataTextField: "text",
+                                dataValueField: "value",
+                                dataSource: response.map(standard => ({
+                                    text: `Standard ${standard}`,
+                                    value: `Standard ${standard}`
+                                })),
+                                change: function (e) {
+                                    const selectedStandard = this.value();
+                                    loadSchedulerData(selectedStandard); // Load scheduler data on change
+                                }
+                            });
+                        },
+                        error: function () {
+                            console.error("Failed to load standards data.");
+                        }
+                    });
+
+                    const teacherAssignments = {};
+
+                    // Prepare teacher assignments once timetables data is available
+                    data.timetables.forEach(({ c_standard, c_subject_name, c_name }) => {
+                        const standardKey = `Standard ${c_standard}`;
+                        if (!teacherAssignments[standardKey]) {
+                            teacherAssignments[standardKey] = {};
+                        }
+                        teacherAssignments[standardKey][c_subject_name] = c_name;
+                    });
+
+                    // Initialize the scheduler with the loaded data
+                    const startDate = new Date("2024-01-01");
+
+                    const generateTimeTable = (standard) => {
+                        let idCounter = 1;
+                        const TimeTable = [];
+                        const subjects = Object.keys(teacherAssignments[standard] || {});
+
+                        const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+                        const times = [
+                            { label: "9:00 AM - 10:00 AM", start: "09:00", end: "10:00" },
+                            { label: "10:00 AM - 11:00 AM", start: "10:00", end: "11:00" },
+                            { label: "11:00 AM - 12:00 PM", start: "11:00", end: "12:00" },
+                            { label: "12:00 PM - 1:00 PM", start: "12:00", end: "13:00", subject: "Lunch Break" },
+                            { label: "1:00 PM - 2:00 PM", start: "13:00", end: "14:00" },
+                            { label: "2:00 PM - 3:00 PM", start: "14:00", end: "15:00" },
+                            { label: "3:00 PM - 4:00 PM", start: "15:00", end: "16:00" },
+                            { label: "4:00 PM - 5:00 PM", start: "16:00", end: "17:00" },
+                        ];
+
+                        days.forEach((day, dayIndex) => {
+                            const currentDay = new Date(startDate);
+                            currentDay.setDate(startDate.getDate() + dayIndex);
+
+                            let subjectIndex = 0;
+                            const assignedSubjects = new Set();
+
+                            times.forEach((time) => {
+                                if (time.subject === "Lunch Break") {
+                                    TimeTable.push({
+                                        id: idCounter++,
+                                        day: day,
+                                        start: new Date(currentDay.toISOString().split('T')[0] + "T" + time.start + ":00"),
+                                        end: new Date(currentDay.toISOString().split('T')[0] + "T" + time.end + ":00"),
+                                        title: "Lunch Break",
+                                        teacher: "N/A",
+                                        std: standard
+                                    });
+                                    return;
+                                }
+
+                                let title, teacher;
+                                if (subjectIndex < subjects.length && !assignedSubjects.has(subjects[subjectIndex])) {
+                                    const subject = subjects[subjectIndex];
+                                    teacher = teacherAssignments[standard][subject];
+                                    title = `${subject} by ${teacher}`;
+                                    assignedSubjects.add(subject);
+                                    subjectIndex++;
+                                } else {
+                                    title = "No Lecture";
+                                    teacher = "N/A";
+                                }
+
+                                TimeTable.push({
+                                    id: idCounter++,
+                                    day: day,
+                                    start: new Date(currentDay.toISOString().split('T')[0] + "T" + time.start + ":00"),
+                                    end: new Date(currentDay.toISOString().split('T')[0] + "T" + time.end + ":00"),
+                                    title: title,
+                                    teacher: teacher,
+                                    std: standard
+                                });
+                            });
+                        });
+
+    console.log(TimeTable);
+                        return TimeTable;
+                    };
+
+                    const loadSchedulerData = (selectedStandard) => {
+                        const scheduler = $("#scheduler").data("kendoScheduler");
+                        const filteredData = generateTimeTable(selectedStandard);
+                        scheduler.dataSource.data(filteredData);
+                    };
+
+                    // Initialize the Kendo Scheduler
+                    const standardColors = {
+                        "Standard 1": "#cc3333",
+                        "Standard 2": "#33cc33",
+                        "Standard 3": "#3333cc",
+                        "Standard 4": "#cccc33",
+                        "Standard 5": "#cc9933",
+                        "Standard 6": "#5798be",
+                        "Standard 7": "#3333cc",
+                        "Standard 8": "#3333cc",
+
+                    };
+
+                    $("#scheduler").kendoScheduler({
+                        date: new Date("2024-01-01"),
+                        startTime: new Date("2024-01-01T09:00:00"),
+                        endTime: new Date("2024-01-01T17:00:00"),
+                        height: 800,
+                        views: [
+                            { type: "day", selected: true },
+                            { type: "week" }
+                        ],
+                        dataSource: new kendo.data.SchedulerDataSource({
+                            data: [],
+                            schema: {
+                                model: {
+                                    id: "id",
+                                    fields: {
+                                        id: { type: "number" },
+                                        title: { type: "string", validation: { required: true } },
+                                        start: { type: "date", validation: { required: true } },
+                                        end: { type: "date", validation: { required: true } },
+                                        std: { type: "string" },
+                                        teacher: { type: "string" }
+                                    }
+                                }
+                            }
+                        }),
+                        eventTemplate: function (event) {
+                            return `<div style="background-color:${standardColors[event.std]}; padding: 4px;">${event.title}</div>`;
+                        }
+                    });
+
+                    // Initial load for Standard 1
+                    loadSchedulerData("Standard 1");
+                },
+                error: function () {
+                    console.error("Failed to load data.");
+                }
+            });
+        });
+
+    </script> *@
+
+@* 
+<script>
+$(document).ready(function () {
+    let data;
+    $.ajax({
+        url: 'http://localhost:5064/api/Teacher/timetable',
+        method: 'GET',
+        dataType: 'json',
+        success: function (responseData) {
+            data = responseData;
+
+            $.ajax({
+                url: 'http://localhost:5064/api/Teacher/Getstandards',
+                method: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    $("#standardSelect").kendoDropDownList({
+                        optionLabel: "Select Standard",
+                        filter: "contains",
+                        dataTextField: "text",
+                        dataValueField: "value",
+                        dataSource: response.map(standard => ({
+                            text: `Standard ${standard}`,
+                            value: `Standard ${standard}`
+                        })),
+                        change: function () {
+                            const selectedStandard = this.value();
+                            loadSchedulerData(selectedStandard);
+                        }
+                    });
+                },
+                error: function () {
+                    console.error("Failed to load standards data.");
+                }
+            });
+
+            const teacherAssignments = {};
+            data.timetables.forEach(({ c_standard, c_subject_name, c_name }) => {
+                const standardKey = `Standard ${c_standard}`;
+                if (!teacherAssignments[standardKey]) {
+                    teacherAssignments[standardKey] = {};
+                }
+                teacherAssignments[standardKey][c_subject_name] = c_name;
+            });
+
+            const startDate = new Date("2024-01-01");
+            const teacherSchedule = {}; // Tracks each teacher's schedule by day and time
+
+            const generateTimeTable = (standard) => {
+                let idCounter = 1;
+                const TimeTable = [];
+                const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+                const times = [
+                    { label: "9:00 AM - 10:00 AM", start: "09:00", end: "10:00" },
+                    { label: "10:00 AM - 11:00 AM", start: "10:00", end: "11:00" },
+                    { label: "11:00 AM - 12:00 PM", start: "11:00", end: "12:00" },
+                    { label: "12:00 PM - 1:00 PM", start: "12:00", end: "13:00", subject: "Lunch Break" },
+                    { label: "1:00 PM - 2:00 PM", start: "13:00", end: "14:00" },
+                    { label: "2:00 PM - 3:00 PM", start: "14:00", end: "15:00" },
+                    { label: "3:00 PM - 4:00 PM", start: "15:00", end: "16:00" }
+                ];
+
+                days.forEach((day, dayIndex) => {
+                    const currentDay = new Date(startDate);
+                    currentDay.setDate(startDate.getDate() + dayIndex);
+                    
+                    times.forEach((time, timeIndex) => {
+                        const timetableEntry = data.timetables.filter(entry => 
+                            entry.c_standard == standard.slice(-1)
+                        )[timeIndex % data.timetables.length];
+                        
+                        if (timetableEntry && timetableEntry.c_name) {
+                            const dayKey = `${currentDay.toDateString()} ${time.start}`;
+                            const teacher = timetableEntry.c_name;
+
+                            if (!teacherSchedule[teacher]) {
+                                teacherSchedule[teacher] = {};
+                            }
+                            
+                            if (!teacherSchedule[teacher][dayKey]) {
+                                TimeTable.push({
+                                    id: idCounter++,
+                                    day: day,
+                                    start: new Date(currentDay.toISOString().split('T')[0] + "T" + time.start + ":00"),
+                                    end: new Date(currentDay.toISOString().split('T')[0] + "T" + time.end + ":00"),
+                                    title: `${timetableEntry.c_subject_name} by ${teacher}`,
+                                    teacher: teacher,
+                                    std: standard
+                                });
+                                
+                                teacherSchedule[teacher][dayKey] = true;
+                            }
+                        }
+                    });
+                });
+
+                return TimeTable;
+            };
+
+            const loadSchedulerData = (selectedStandard) => {
+                const scheduler = $("#scheduler").data("kendoScheduler");
+                const filteredData = generateTimeTable(selectedStandard);
+                scheduler.dataSource.data(filteredData);
+            };
+
+            $("#scheduler").kendoScheduler({
+                date: new Date("2024-01-01"),
+                startTime: new Date("2024-01-01T09:00:00"),
+                endTime: new Date("2024-01-01T17:00:00"),
+                height: 800,
+                views: [
+                    { type: "day", selected: true },
+                    { type: "week" }
+                ],
+                dataSource: new kendo.data.SchedulerDataSource({
+                    data: [],
+                    schema: {
+                        model: {
+                            id: "id",
+                            fields: {
+                                id: { type: "number" },
+                                title: { type: "string", validation: { required: true } },
+                                start: { type: "date", validation: { required: true } },
+                                end: { type: "date", validation: { required: true } },
+                                std: { type: "string" },
+                                teacher: { type: "string" }
+                            }
+                        }
+                    }
+                }),
+                eventTemplate: function (event) {
+                    const standardColors = {
+                        "Standard 1": "#cc3333",
+                        "Standard 2": "#33cc33",
+                        "Standard 3": "#3333cc",
+                        "Standard 4": "#ffcc33",
+                        "Standard 5": "#3399cc",
+                    };
+                    return `<div style="background-color:${standardColors[event.std]}; padding: 4px;">${event.title}</div>`;
+                }
+            });
+
+            loadSchedulerData("Standard 1");
+        },
+        error: function () {
+            console.error("Failed to load data.");
+        }
+    });
+});
+</script> *@
+
+@* <script>
+$(document).ready(function () {
+    console.log("yash");
+    let data;
+    $.ajax({
+        url: 'http://localhost:5064/api/Teacher/timetable',
+        method: 'GET',
+        dataType: 'json',
+        success: function (responseData) {
+            data = responseData;
+
+            $.ajax({
+                url: 'http://localhost:5064/api/Teacher/Getstandards',
+                method: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    $("#standardSelect").kendoDropDownList({
+                        optionLabel: "Select Standard",
+                        filter: "contains",
+                        dataTextField: "text",
+                        dataValueField: "value",
+                        dataSource: response.map(standard => ({
+                            text: `Standard ${standard}`,
+                            value: `Standard ${standard}`
+                        })),
+                        change: function () {
+                            const selectedStandard = this.value();
+                            loadSchedulerData(selectedStandard);
+                        }
+                    });
+                },
+                error: function () {
+                    console.error("Failed to load standards data.");
+                }
+            });
+
+            const teacherAssignments = {};
+            data.timetables.forEach(({ c_standard, c_subject_name, c_name }) => {
+                const standardKey = `Standard ${c_standard}`;
+                if (!teacherAssignments[standardKey]) {
+                    teacherAssignments[standardKey] = {};
+                }
+                teacherAssignments[standardKey][c_subject_name] = c_name;
+            });
+
+            const startDate = new Date("2024-01-01");
+            const teacherSchedule = {}; // Tracks each teacher's schedule by day and time
+
+            const generateTimeTable = (standard) => {
+                let idCounter = 1;
+                const TimeTable = [];
+                const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+                const times = [
+                    { label: "9:00 AM - 10:00 AM", start: "09:00", end: "10:00" },
+                    { label: "10:00 AM - 11:00 AM", start: "10:00", end: "11:00" },
+                    { label: "11:00 AM - 12:00 PM", start: "11:00", end: "12:00" },
+                    { label: "12:00 PM - 1:00 PM", start: "12:00", end: "13:00", subject: "Lunch Break" },
+                    { label: "1:00 PM - 2:00 PM", start: "13:00", end: "14:00" },
+                    { label: "2:00 PM - 3:00 PM", start: "14:00", end: "15:00" },
+                    { label: "3:00 PM - 4:00 PM", start: "15:00", end: "16:00" },
+                    { label: "4:00 PM - 5:00 PM", start: "16:00", end: "17:00" },
+                ];
+
+                days.forEach((day, dayIndex) => {
+                    const currentDay = new Date(startDate);
+                    currentDay.setDate(startDate.getDate() + dayIndex);
+                    
+                    times.forEach((time, timeIndex) => {
+                        const timetableEntry = data.timetables.filter(entry => 
+                            entry.c_standard == standard.slice(-1)
+                        )[timeIndex % data.timetables.length];
+
+                        // For "12:00 PM - 1:00 PM" slot, set as "Lunch Break"
+                        if (time.subject === "Lunch Break") {
+                            TimeTable.push({
+                                id: idCounter++,
+                                day: day,
+                                start: new Date(currentDay.toISOString().split('T')[0] + "T" + time.start + ":00"),
+                                end: new Date(currentDay.toISOString().split('T')[0] + "T" + time.end + ":00"),
+                                title: "Lunch Break",
+                                teacher: "N/A",
+                                std: standard
+                            });
+                        } else if (timetableEntry && timetableEntry.c_name) {
+                            const dayKey = `${currentDay.toDateString()} ${time.start}`;
+                            const teacher = timetableEntry.c_name;
+
+                            if (!teacherSchedule[teacher]) {
+                                teacherSchedule[teacher] = {};
+                            }
+
+                            if (!teacherSchedule[teacher][dayKey]) {
+                                TimeTable.push({
+                                    id: idCounter++,
+                                    day: day,
+                                    start: new Date(currentDay.toISOString().split('T')[0] + "T" + time.start + ":00"),
+                                    end: new Date(currentDay.toISOString().split('T')[0] + "T" + time.end + ":00"),
+                                    title: `${timetableEntry.c_subject_name} by ${teacher}`,
+                                    teacher: teacher,
+                                    std: standard
+                                });
+
+                                teacherSchedule[teacher][dayKey] = true;
+                            }
+                        } else {
+                            // If no entry exists for this time slot, add "No Lecture"
+                            const dayKey = `${currentDay.toDateString()} ${time.start}`;
+                            if (!teacherSchedule[dayKey]) {
+                                TimeTable.push({
+                                    id: idCounter++,
+                                    day: day,
+                                    start: new Date(currentDay.toISOString().split('T')[0] + "T" + time.start + ":00"),
+                                    end: new Date(currentDay.toISOString().split('T')[0] + "T" + time.end + ":00"),
+                                    title: "No Lecture",
+                                    teacher: "N/A",
+                                    std: standard
+                                });
+                                teacherSchedule[dayKey] = true;
+                            }
+                        }
+                    });
+                });
+
+                return TimeTable;
+            };
+
+              const loadSchedulerData = (selectedStandard) => {
+                        const scheduler = $("#scheduler").data("kendoScheduler");
+                        const filteredData = generateTimeTable(selectedStandard);
+                        scheduler.dataSource.data(filteredData);
+                    };
+
+            $("#scheduler").kendoScheduler({
+                date: new Date("2024-01-01"),
+                startTime: new Date("2024-01-01T09:00:00"),
+                endTime: new Date("2024-01-01T17:00:00"),
+                height: 800,
+                views: [
+                    { type: "day", selected: true },
+                    { type: "week" }
+                ],
+                dataSource: new kendo.data.SchedulerDataSource({
+                    data: [],
+                    schema: {
+                        model: {
+                            id: "id",
+                            fields: {
+                                id: { type: "number" },
+                                title: { type: "string", validation: { required: true } },
+                                start: { type: "date", validation: { required: true } },
+                                end: { type: "date", validation: { required: true } },
+                                std: { type: "string" },
+                                teacher: { type: "string" }
+                            }
+                        }
+                    }
+                }),
+                eventTemplate: function (event) {
+                    const standardColors = {
+                        "Standard 1": "#cc3333",
+                        "Standard 2": "#33cc33",
+                        "Standard 3": "#3333cc",
+                        "Standard 4": "#ffcc33",
+                        "Standard 5": "#3399cc",
+                    };
+                    return `<div style="background-color:${standardColors[event.std]}; padding: 4px;">${event.title}</div>`;
+                }
+            });
+
+            loadSchedulerData("Standard 1");
+        },
+        error: function () {
+            console.error("Failed to load data.");
+        }
+    });
+}); 
+
+
+</script>*@
+@* 
+<script>
+
+        $(document).ready(function () {
+            let data;
+            $.ajax({
+                url: 'http://localhost:5064/api/Teacher/timetable',
+                method: 'GET',
+                dataType: 'json',
+                success: function (responseData) {
+                    data = responseData;
+                    console.log(data);
+
+                    // Initialize the DropDownList with data fetched from the API
+                    $.ajax({
+                        url: 'http://localhost:5064/api/Teacher/Getstandards', // Replace with your API endpoint
+                        method: 'GET',
+                        dataType: 'json',
+                        success: function (response) {
+                            // Assuming response is an array of standards, e.g., [1, 2, 3, 4, 5]
+                            $("#standardSelect").kendoDropDownList({
+                                optionLabel: "Select Standard",
+                                filter: "contains",
+                                dataTextField: "text",
+                                dataValueField: "value",
+                                dataSource: response.map(standard => ({
+                                    text: `Standard ${standard}`,
+                                    value: `Standard ${standard}`
+                                })),
+                                change: function (e) {
+                                    const selectedStandard = this.value();
+                                    loadSchedulerData(selectedStandard); // Load scheduler data on change
+                                }
+                            });
+                        },
+                        error: function () {
+                            console.error("Failed to load standards data.");
+                        }
+                    });
+
+                    const teacherAssignments = {};
+
+                    // Prepare teacher assignments once timetables data is available
+                    data.timetables.forEach(({ c_standard, c_subject_name, c_name }) => {
+                        const standardKey = `Standard ${c_standard}`;
+                        if (!teacherAssignments[standardKey]) {
+                            teacherAssignments[standardKey] = {};
+                        }
+                        teacherAssignments[standardKey][c_subject_name] = c_name;
+                    });
+
+                    // Initialize the scheduler with the loaded data
+                    const startDate = new Date("2024-01-01");
+
+                    const generateTimeTable = (standard) => {
+                        let idCounter = 1;
+                        const TimeTable = [];
+                        const subjects = Object.keys(teacherAssignments[standard] || {});
+
+                        const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+                        const times = [
+                            { label: "9:00 AM - 10:00 AM", start: "09:00", end: "10:00" },
+                            { label: "10:00 AM - 11:00 AM", start: "10:00", end: "11:00" },
+                            { label: "11:00 AM - 12:00 PM", start: "11:00", end: "12:00" },
+                            { label: "12:00 PM - 1:00 PM", start: "12:00", end: "13:00", subject: "Lunch Break" },
+                            { label: "1:00 PM - 2:00 PM", start: "13:00", end: "14:00" },
+                            { label: "2:00 PM - 3:00 PM", start: "14:00", end: "15:00" },
+                            { label: "3:00 PM - 4:00 PM", start: "15:00", end: "16:00" },
+                            { label: "4:00 PM - 5:00 PM", start: "16:00", end: "17:00" },
+                        ];
+
+                        days.forEach((day, dayIndex) => {
+                            const currentDay = new Date(startDate);
+                            currentDay.setDate(startDate.getDate() + dayIndex);
+
+                            let subjectIndex = 0;
+                            const assignedSubjects = new Set();
+
+                            times.forEach((time) => {
+                                if (time.subject === "Lunch Break") {
+                                    TimeTable.push({
+                                        id: idCounter++,
+                                        day: day,
+                                        start: new Date(currentDay.toISOString().split('T')[0] + "T" + time.start + ":00"),
+                                        end: new Date(currentDay.toISOString().split('T')[0] + "T" + time.end + ":00"),
+                                        title: "Lunch Break",
+                                        teacher: "N/A",
+                                        std: standard
+                                    });
+                                    return;
+                                }
+
+                                let title, teacher;
+                                if (subjectIndex < subjects.length && !assignedSubjects.has(subjects[subjectIndex])) {
+                                    const subject = subjects[subjectIndex];
+                                    teacher = teacherAssignments[standard][subject];
+                                    title = `${subject} by ${teacher}`;
+                                    assignedSubjects.add(subject);
+                                    subjectIndex++;
+                                } else {
+                                    title = "No Lecture";
+                                    teacher = "N/A";
+                                }
+
+                                TimeTable.push({
+                                    id: idCounter++,
+                                    day: day,
+                                    start: new Date(currentDay.toISOString().split('T')[0] + "T" + time.start + ":00"),
+                                    end: new Date(currentDay.toISOString().split('T')[0] + "T" + time.end + ":00"),
+                                    title: title,
+                                    teacher: teacher,
+                                    std: standard
+                                });
+                            });
+                        });
+
+    console.log(TimeTable);
+                        return TimeTable;
+                    };
+
+                    const loadSchedulerData = (selectedStandard) => {
+                        const scheduler = $("#scheduler").data("kendoScheduler");
+                        const filteredData = generateTimeTable(selectedStandard);
+                        scheduler.dataSource.data(filteredData);
+                    };
+
+                    // Initialize the Kendo Scheduler
+                    const standardColors = {
+                        "Standard 1": "#cc3333",
+                        "Standard 2": "#33cc33",
+                        "Standard 3": "#3333cc",
+                        "Standard 4": "#cccc33",
+                        "Standard 5": "#cc9933",
+                        "Standard 6": "#5798be",
+                        "Standard 7": "#3333cc",
+                        "Standard 8": "#3333cc",
+
+                    };
+
+                    $("#scheduler").kendoScheduler({
+                        date: new Date("2024-01-01"),
+                        startTime: new Date("2024-01-01T09:00:00"),
+                        endTime: new Date("2024-01-01T17:00:00"),
+                        height: 800,
+                        views: [
+                            { type: "day", selected: true },
+                            { type: "week" }
+                        ],
+                        dataSource: new kendo.data.SchedulerDataSource({
+                            data: [],
+                            schema: {
+                                model: {
+                                    id: "id",
+                                    fields: {
+                                        id: { type: "number" },
+                                        title: { type: "string", validation: { required: true } },
+                                        start: { type: "date", validation: { required: true } },
+                                        end: { type: "date", validation: { required: true } },
+                                        std: { type: "string" },
+                                        teacher: { type: "string" }
+                                    }
+                                }
+                            }
+                        }),
+                        eventTemplate: function (event) {
+                            return `<div style="background-color:${standardColors[event.std]}; padding: 4px;">${event.title}</div>`;
+                        }
+                    });
+
+                    // Initial load for Standard 1
+                    loadSchedulerData("Standard 1");
+                },
+                error: function () {
+                    console.error("Failed to load data.");
+                }
+            });
+        });
+
+
+
+</script> *@
+
+
+
+
+</body>
+
+
+</html>

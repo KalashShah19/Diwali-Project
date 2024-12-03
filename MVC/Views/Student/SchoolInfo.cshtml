@@ -1,0 +1,64 @@
+@{
+    ViewData["Title"] = "School Info";
+    Layout = "Student";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Info</title>
+    
+    <!-- Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Include Kendo UI -->
+    <link href="https://kendo.cdn.telerik.com/VERSION/styles/kendo.default-v2.min.css" rel="stylesheet" />
+    <script src="https://kendo.cdn.telerik.com/VERSION/js/kendo.all.min.js"></script>
+
+    <!-- Your custom script -->
+    <script>
+        const apihost = "http://localhost:5064";
+        $(document).ready(function () {
+            $.ajax({
+                url: "http://localhost:5064/api/Student/GetSchoolInfo",
+                method: "GET",
+                success: function (data) {
+                    console.log("Data fetched:", data);
+                    $("#panelbar").kendoPanelBar({
+                        dataSource: [
+                            {
+                                text: "School Information",
+                                expanded: true,
+                                items: [
+                                    { text: "Address", content: `<p>${data.schoolAddress}</p>` },
+                                    { text: "Contact Number", content: `<p>${data.schoolContactNumber}</p>` }
+                                ]
+                            },
+                            {
+                                text: "Principal Information",
+                                expanded: true,
+                                items: [
+                                    {
+                                        text: "Principal Image",
+                                        content: `<img src="${apihost}/${data.principalImage}" alt="Principal Image" style="width:100px; height:auto;">`
+                                    },
+                                    { text: "Name", content: `<p>${data.principalName}</p>` },
+                                    { text: "Qualification", content: `<p>${data.principalQualification}</p>` }
+                                ]
+                            }
+                        ]
+                    });
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error("Error fetching data:", textStatus, errorThrown);
+                    alert("Failed to load school information.");
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <div id="panelbar"></div>
+</body>
+</html>

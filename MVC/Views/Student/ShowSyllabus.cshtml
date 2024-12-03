@@ -1,0 +1,93 @@
+@{
+    ViewData["Title"] = "Syllabus Timeline";
+    Layout = "Student";
+}
+
+<h2>Syllabus Timeline</h2>
+<div id="subjectDropdown"></div>
+
+<div id="timeline"></div>
+
+<script>
+    var cwsid = 0;
+    $(document).ready(function () {
+        $("#subjectDropdown").kendoDropDownList({
+            dataSource: {
+                transport: {
+                    read: {
+                        url: "/Student/GetSubjects",
+                        dataType: "json"
+                    }
+                }
+            },
+            dataTextField: "name",
+            dataValueField: "id",
+            optionLabel: "Select Subject...",
+            filter: "contains",
+            change: onSelectionChange,
+            height: 300
+        });
+
+    });
+
+    function loadTimeline(cwsid) {
+        if ($("#timeline").data("kendoTimeline")) {
+            $("#timeline").data("kendoTimeline").destroy();
+            $("#timeline").empty();
+        }
+
+        $("#timeline").kendoTimeline({
+            dataSource: {
+                transport: {
+                    read: {
+                        url: "/Student/GetSyllabusTimelineData/" + cwsid,
+                        dataType: "json"
+                    }
+                },
+                schema: {
+                    model: {
+                        id: "syllabusID",
+                        fields: {
+                            date: { type: "date" },
+                            title: { type: "string" },
+                            description: { type: "string" },
+                        }
+                    }
+                },
+                requestEnd: function (e) {
+                    console.log("Timeline Data:", e.response);
+                }
+            },
+            orientation: "horizontal"
+        });
+    }
+
+    function onSelectionChange() {
+        var cwsid = 0;
+        var selectedStandard = 3;
+        var selectedSubjectId = $("#subjectDropdown").data("kendoDropDownList").value();
+
+        if (selectedSubjectId) {
+            $.ajax({
+                url: "/Student/GetCWSID",
+                type: "GET",
+                data: {
+                    subjectId: selectedSubjectId,
+                    standard: selectedStandard
+                },
+                success: function (response) {
+                    if (response.cwsid) {
+                        cwsid = response.cwsid;
+                        console.log("CWSID:", cwsid);
+                        loadTimeline(cwsid);
+                    } else {
+                        console.log("No matching CWSID found.");
+                    }
+                },
+                error: function (error) {
+                    console.error("Error fetching CWSID:", error);
+                }
+            });
+        }
+    }
+</script>

@@ -1,0 +1,34 @@
+Admin Features:
+    Manage Standards using kendoGrid.
+    Manage SchoolInfo using kendoForm.
+    Manage Subjects using kendoGrid.
+    Manage Class wise Subjects using kendoGrid.
+    Manage Fees Structure using kendoGrid.
+    View Feedback using kendoGrid.
+    View Teachers and class wise students using kendoTreeList.
+    View Timetable for each standard using kendoScheduler.
+    Manage Student details and Teacher Details using kendoGrid.
+    Approve students and Hire Teachers using kendoGrid.
+    Monthly Syllabus progress displayed in kendoTimeLine.
+    
+Teacher Features:
+    Teacher dashboard displaying students' information using kendoCards.
+    Teacher profile update using kendoForm.
+    View feedback using kendoGrid.
+    Upload materials through kendoFileManager and view them in kendoPDFViewer.
+    Timetable scheduling using the kendoScheduler component.
+    Update monthly syllabus progress using kendoGanttChart.
+    
+Student Features:
+    (done) Dashboard with personal information and facility to update personal information and kendoForm.
+    (done) Monthly syllabus progress displayed in a kendoTimeline.
+    (done) View student’s class timetable using kendoScheduler.
+    (done) View fees details in KendoGrid and fees payment options using KendoActionSheet.
+    (done) View already given feedback using KendoGrid Teacher feedback represented by a KendoSlider and kendoForm.
+    (done) School information displayed in a kendoPanelBar.
+    (done) View materials uploaded by teachers using kendoFileManager and view them using kendoPDFViewer.
+    
+Login / Register Features:
+    Login Page with captcha verification using kendoForm.
+    Users can register as teacher or student using kendoWizard.
+    Users can reset their password using OTP, using kendoForm

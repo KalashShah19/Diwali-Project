@@ -1,0 +1,270 @@
+@{
+    ViewData["Title"] = "Edit Profile";
+    Layout = "Teacher";
+}
+
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <script src="/js/UpdateProfile.js"></script>
+    <style>
+        .cards-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-evenly;
+        }
+
+        .image-large {
+            width: 100%;
+            height: auto;
+        }
+
+        .k-card {
+            width: 28%;
+            margin: 1%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .k-card-header {
+            border-color: #d5d5d5;
+            color: #ffffff;
+            background-color: #5798be;
+            padding: 10px;
+        }
+
+        .k-card-body {
+            padding: 15px;
+            flex-grow: 1;
+        }
+
+        .k-card-footer {
+            padding: 10px;
+            text-align: center;
+        }
+
+        .k-card-title {
+            margin: 0;
+            font-size: 1.2em;
+        }
+
+        .k-card-subtitle {
+            margin: 5px 0;
+            color: #f5f5f5;
+        }
+
+        .k-card-actions {
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+        }
+
+        .k-card-actions .k-button {
+            flex-grow: 1;
+        }
+
+        .k-button-primary {
+            background-color: #5798be;
+            color: #ffffff;
+        }
+
+        .k-actions-stretched {
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+
+        .k-button1 {
+            width: 48%;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+
+        .k-dialog {
+            width: 400px;
+            max-width: 100%;
+            margin: 0 auto;
+            /* Center modal horizontally */
+        }
+
+        .k-window-titlebar {
+            background-color: #5798be;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .k-window-content {
+            padding: 15px;
+        }
+
+        .k-form label {
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .k-textbox,
+        input[type="file"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .k-dialog-buttongroup {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+
+
+
+        .k-button-primary {
+            background-color: #5798be;
+            color: #fff;
+        }
+
+        .k-button-secondary {
+            background-color: #f1f1f1;
+            color: #5798be;
+        }
+
+        /* Center the modal on screen */
+        .k-window-content {
+            padding: 20px;
+        }
+
+        .k-dialog {
+            width: 400px;
+            max-width: 100%;
+            margin: 0 auto;
+            /* Center modal horizontally */
+        }
+
+        .k-window-titlebar {
+            background-color: #5798be;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .k-window-content {
+            padding: 15px;
+        }
+
+        .k-form label {
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        /* Ensure all input fields including date have consistent styling */
+        .k-textbox,
+        input[type="file"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+            /* Ensure padding doesn't affect width */
+        }
+
+        /* Focus styling for inputs */
+        .k-textbox:focus,
+        input[type="file"]:focus,
+        input[type="date"]:focus {
+            border: 1px solid #5798be;
+            /* Green border on focus */
+            outline: none;
+            /* Remove default outline */
+            box-shadow: 0 0 5px rgba(18, 71, 50, 0.5);
+            /* Optional: Add shadow effect */
+        }
+
+        /* Additional styling for file input to match textboxes */
+        input[type="file"] {
+            padding: 6px 8px;
+            /* Make file input look more consistent with other inputs */
+        }
+
+        /* Button group and styling */
+        .k-dialog-buttongroup {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+
+        .k-button-primary {
+            background-color: #5798be;
+            color: #fff;
+        }
+
+        .k-button-secondary {
+            background-color: #f1f1f1;
+            color: #5798be;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="notification"></div>
+    <div id="cardsContainer" class="cards-container k-rtl"></div>
+    <button id="editButton" class="k-button k-button-md k-rounded-md" style="display:none;">Edit Profile</button>
+
+    <div id="editModal" class="" style="display: none;">
+        <div class="k-window-content">
+            <div class="k-form">
+                <label for="name">Name</label>
+                <input type="text" id="editName" class="k-textbox" />
+                <span id="nameError" class="error-message" style="color: red; display: none;"></span>
+
+                <label for="email">Email</label>
+                <input type="text" id="editEmail" class="k-textbox" />
+                <span id="emailError" class="error-message" style="color: red; display: none;"></span>
+
+                <label for="gender">Gender</label>
+                <input type="radio" name="Gender" id="male" value="Male" />
+                <label for="male">Male</label>
+                <input type="radio" name="Gender" id="female" value="Female" />
+                <label for="female">Female</label>
+                <span id="genderError" class="error-message" style="color: red; display: none;"></span>
+
+                <label for="mobile">Mobile</label>
+                <input type="text" id="editMobile" class="k-textbox" />
+                <span id="mobileError" class="error-message" style="color: red; display: none;"></span>
+
+                <label for="birthDate">Birth Date</label>
+                <input id="datepicker" />
+                <span id="birthDateError" class="error-message" style="color: red; display: none;"></span>
+
+                <label for="address">Address</label>
+                <textarea id="editAddress" class="k-textbox"></textarea>
+                <span id="addressError" class="error-message" style="color: red; display: none;"></span>
+
+                <label for="image">Profile Image</label>
+                <input type="file" id="editImage" class="k-textbox" />
+                <span id="imageError" class="error-message" style="color: red; display: none;"></span>
+
+            </div>
+        </div>
+        <div class="k-dialog-buttongroup">
+            <button id="saveButton" class="k-button k-button1 k-button-md k-rounded-md k-button-primary">Save</button>
+            <button id="cancelButton"
+                class="k-button k-button1 k-button-md k-rounded-md k-button-secondary">Cancel</button>
+        </div>
+    </div>
+
+</body>
+
+</html>

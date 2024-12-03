@@ -1,0 +1,138 @@
+@{
+    ViewData["Title"] = "Syllabus Timeline";
+    Layout = "Teacher";
+}
+
+<h2> Manage Syllabus </h2>
+
+<div id="subjectDropdown"></div> <br> <br>
+<div id="standardDropdown"></div>
+
+<div id="gantt"></div>
+
+<script>
+    function loadGantt(cwsid) {
+        if ($("#gantt").data("kendoGantt")) {
+            $("#gantt").data("kendoGantt").destroy();
+            $("#gantt").empty();
+        }
+
+        $("#gantt").kendoGantt({
+            dataSource: {
+                transport: {
+                    read: {
+                        url: "/Teacher/GetSyllabusData/" + cwsid,
+                        type: "GET",
+                        dataType: "json"
+                    },
+                    create: {
+                        url: "/Teacher/CreateSyllabus/" + cwsid,
+                        type: "GET",
+                        dataType: "json",
+                        complete: function (response) {
+                            $("#gantt").data("kendoGantt").dataSource.read();
+                        }
+                    },
+                    update: {
+                        url: "/Teacher/UpdateSyllabus",
+                        type: "POST",
+                        dataType: "json",
+                        complete: function (response) {
+                            $("#gantt").data("kendoGantt").dataSource.read();
+                        }
+                    },
+                    destroy: {
+                        url: function (data) {
+                            console.log(data)
+                        },
+                        type: "DELETE",
+                        complete: function (response) {
+                            $("#gantt").data("kendoGantt").dataSource.read();
+                        }
+                    },
+                },
+            },
+            schema: {
+                model: {
+                    id: "syllabusID",
+                    fields: {
+                        start: { type: "date" },
+                        end: { type: "date" }
+                    }
+                }
+            },
+            editable: true,
+            views: ["day", "week", { type: "month", selected: true }, "year"],
+            columns: [
+                { field: "title", title: "Chapters" },
+                { field: "done", title: "Done %" }
+            ],
+        });
+    };
+
+    $(document).ready(function () {
+        $("#subjectDropdown").kendoDropDownList({
+            dataSource: {
+                transport: {
+                    read: {
+                        url: "/Teacher/GetSubjects",
+                        dataType: "json"
+                    }
+                }
+            },
+            dataTextField: "name",
+            dataValueField: "id",
+            optionLabel: "Select Subject...",
+            filter: "contains",
+            change: onSelectionChange,
+            height: 300
+        });
+
+        $("#standardDropdown").kendoDropDownList({
+            dataSource: {
+                transport: {
+                    read: {
+                        url: "/Teacher/GetStandards",
+                        dataType: "json"
+                    }
+                }
+            },
+            dataTextField: "standard",
+            dataValueField: "standard",
+            optionLabel: "Select Standard...",
+            filter: "contains",
+            change: onSelectionChange,
+            height: 300
+        });
+    });
+
+    function onSelectionChange() {
+        var cwsid = 0;
+        selectedSubjectId = $("#subjectDropdown").data("kendoDropDownList").value();
+        selectedStandard = $("#standardDropdown").data("kendoDropDownList").value();
+
+        if (selectedSubjectId && selectedStandard) {
+            console.log(selectedSubjectId, selectedStandard);
+            $.ajax({
+                url: "/Teacher/GetCWSID",
+                type: "GET",
+                data: {
+                    subjectId: selectedSubjectId,
+                    standard: selectedStandard
+                },
+                success: function (response) {
+                    if (response.cwsid) {
+                        cwsid = response.cwsid;
+                        console.log("CWSID:", cwsid);
+                        loadGantt(cwsid);
+                    } else {
+                        console.log("No matching CWSID found.");
+                    }
+                },
+                error: function (error) {
+                    console.error("Error fetching CWSID:", error);
+                }
+            });
+        }
+    }
+</script>

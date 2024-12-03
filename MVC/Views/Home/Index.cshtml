@@ -1,0 +1,406 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+    Layout = "_CustomLayout";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management System</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+    <style>
+        /* Additional styling for custom look */
+        .hero-section {
+            background: url('./Images/school.jpg') no-repeat center center;
+            background-size: cover;
+            height: 60vh;
+            color: white;
+        }
+
+        .hero-section .overlay {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10rem 0;
+        }
+
+        .testimonial {
+            font-style: italic;
+        }
+
+        /* Faculty Section */
+        #faculty {
+            background-color: #f9f9f9;
+            padding: 4rem 0;
+        }
+
+        #faculty h2 {
+            margin-bottom: 2rem;
+            color: #333;
+        }
+
+        #faculty img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        #faculty h5 {
+            font-size: 1.2rem;
+            margin-top: 1rem;
+            color: #444;
+        }
+
+        #faculty p {
+            color: #777;
+        }
+
+        /* Upcoming Events Section */
+        #events {
+            padding: 4rem 0;
+            background-color: #fafafa;
+        }
+
+        #events h2 {
+            color: #333;
+            margin-bottom: 2rem;
+        }
+
+        #events .list-group-item {
+            font-size: 1rem;
+            padding: 1rem;
+            border: none;
+            border-radius: 5px;
+            background-color: #f1f1f1;
+            color: #555;
+            margin-bottom: 0.5rem;
+        }
+
+        /* News & Announcements Section */
+        #news {
+            background-color: #ffffff;
+            padding: 4rem 0;
+        }
+
+        #news h2 {
+            margin-bottom: 2rem;
+            color: #333;
+        }
+
+        #news ul {
+            list-style-type: none;
+            padding-left: 0;
+            color: #666;
+        }
+
+        #news ul li {
+            margin-bottom: 0.75rem;
+            font-size: 1rem;
+        }
+
+        /* Our Programs Section */
+        #programs {
+            padding: 4rem 0;
+        }
+
+        #programs h2 {
+            margin-bottom: 2rem;
+            color: #333;
+            text-align: center;
+        }
+
+        #programs .col-md-4 h4 {
+            color: #444;
+            font-size: 1.2rem;
+        }
+
+        #programs .col-md-4 p {
+            color: #777;
+            font-size: 0.9rem;
+        }
+
+        /* General Styles */
+        .section-title {
+            font-size: 2rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: #333;
+        }
+
+        .feature-card,
+        .testimonial-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 1.5rem;
+            background: #ffffff;
+            margin-top: 1.5rem;
+        }
+
+        .testimonial {
+            color: #555;
+        }
+
+        .site-footer {
+            background-color: #343a40;
+            /* Dark background color */
+            color: #ffffff;
+            /* Text color */
+            padding: 2rem 0;
+            /* Padding for spacing */
+        }
+
+        .site-footer h5 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+
+        .site-footer ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .site-footer ul li a {
+            color: #ffffff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .site-footer ul li a:hover {
+            color: #f8f9fa;
+            /* Lighter color on hover */
+        }
+
+        .site-footer p {
+            margin: 0.5rem 0;
+            /* Vertical spacing for contact info */
+        }
+
+        .social-icons li {
+            display: inline;
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+
+<body>
+   
+    <header class="hero-section bg text-center">
+        <div class="overlay">
+            <h1 class="display-6 hero-title">Welcome to Our Student Management System</h1>
+            <p class="lead hero-subtitle">Making student management efficient and accessible</p>
+        </div>
+    </header>
+
+
+    
+    <section id="about" class="container my-5">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h2 class="section-title">About Our School</h2>
+                <p class="lead about-text">
+                    Our school is committed to nurturing students in a safe and supportive environment, where every
+                    individual’s potential is recognized and cultivated. We believe in the holistic development of each
+                    student, encouraging not only academic excellence but also personal growth, creativity, and critical
+                    thinking skills. Our dedicated educators strive to instill a love for lifelong learning, resilience,
+                    and respect for others.
+                </p>
+            </div>
+            <div class="col-md-6">
+                <img src="./Images/school.jpg" alt="School" class="img-fluid rounded shadow-lg about-image">
+            </div>
+        </div>
+    </section>
+
+
+   
+    <section id="features" class="bg-light py-5">
+        <div class="container">
+            <h2 class="text-center section-title">Features</h2>
+            <div class="row text-center">
+                <div class="col-md-4 feature-card">
+                    <h4 class="feature-title">Student Tracking</h4>
+                    <p class="feature-text">Keep a record of all student information, attendance, and academic progress
+                        in one place.</p>
+                </div>
+                <div class="col-md-4 feature-card">
+                    <h4 class="feature-title">Parent Communication</h4>
+                    <p class="feature-text">Seamlessly communicate with parents to keep them updated on their child’s
+                        progress.</p>
+                </div>
+                <div class="col-md-4 feature-card">
+                    <h4 class="feature-title">Report Generation</h4>
+                    <p class="feature-text">Generate detailed reports to analyze academic performance and other metrics.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+   
+    <section id="mission" class="py-5 bg-light">
+        <div class="container text-center">
+            <h2 class="section-title">Our Mission</h2>
+            <p class="lead">To empower students through quality education, fostering innovation, critical thinking, and
+                social responsibility to prepare them for a successful future.</p>
+        </div>
+    </section>
+
+
+    
+    <section id="events" class="container my-5">
+        <h2 class="text-center section-title">Upcoming Events</h2>
+        <ul class="list-group">
+            <li class="list-group-item">Science Exhibition - Jan 12, 2024</li>
+            <li class="list-group-item">Annual Sports Day - Feb 5, 2024</li>
+            <li class="list-group-item">Art & Culture Fest - Mar 20, 2024</li>
+        </ul>
+    </section>
+
+   
+    <section id="faculty" class="bg-light py-5">
+        <div class="container">
+            <h2 class="text-center section-title">Meet Our Faculty</h2>
+            <div class="row">
+                <div class="col-md-4 text-center">
+                    <img src="./Images/faculty1.jpg" class="img-fluid rounded-circle mb-3" alt="Teacher 1">
+                    <h5>Dr. Anna Williams</h5>
+                    <p>Science Department</p>
+                </div>
+                <div class="col-md-4 text-center">
+                    <img src="./Images/faculty2.jpg" class="img-fluid rounded-circle mb-3" alt="Teacher 2">
+                    <h5>Mr. John Smith</h5>
+                    <p>Mathematics Department</p>
+                </div>
+                <div class="col-md-4 text-center">
+                    <img src="./Images/faculty3.jpg" class="img-fluid rounded-circle mb-3" alt="Teacher 3">
+                    <h5>Ms. Sarah Johnson</h5>
+                    <p>English Department</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    
+    <section id="programs" class="container my-5">
+        <h2 class="text-center section-title">Our Programs</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <h4>Science & Technology</h4>
+                <p>Hands-on learning in science and technology to inspire the innovators of tomorrow.</p>
+            </div>
+            <div class="col-md-4">
+                <h4>Arts & Humanities</h4>
+                <p>Creative and critical thinking development through various art and humanities programs.</p>
+            </div>
+            <div class="col-md-4">
+                <h4>Sports & Wellness</h4>
+                <p>Programs focused on physical wellness, teamwork, and healthy competition.</p>
+            </div>
+        </div>
+    </section>
+
+
+   
+    <section id="testimonials" class="container my-5">
+        <h2 class="text-center section-title">What Our Students Say</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card testimonial-card shadow-sm">
+                    <div class="card-body">
+                        <p class="testimonial">"This system has made tracking my progress so much easier. I love it!"
+                        </p>
+                        <footer class="blockquote-footer text-muted">John Doe, Grade 10</footer>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card testimonial-card shadow-sm">
+                    <div class="card-body">
+                        <p class="testimonial">"I feel more connected to my studies and teachers thanks to this system."
+                        </p>
+                        <footer class="blockquote-footer text-muted">Jane Smith, Grade 8</footer>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card testimonial-card shadow-sm">
+                    <div class="card-body">
+                        <p class="testimonial">"An excellent tool for managing everything in one place!"</p>
+                        <footer class="blockquote-footer text-muted">Michael Johnson, Grade 12</footer>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    
+    <section id="news" class="bg-white py-5">
+        <div class="container">
+            <h2 class="text-center section-title">News & Announcements</h2>
+            <ul class="list-unstyled">
+                <li><strong>School Fair:</strong> Join us on Dec 15 for our annual fair. Fun, games, and more!</li>
+                <li><strong>Online Classes:</strong> New online class schedules are available for 2024.</li>
+                <li><strong>Winter Break:</strong> School will be closed from Dec 20 - Jan 3.</li>
+            </ul>
+        </div>
+    </section>
+
+   
+    <footer class="site-footer bg-dark text-white text-center text-md-left py-4">
+        <div class="container">
+            <div class="row">
+               
+                <div class="col-md-4 mb-3">
+                    <h5 class="text-info">Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#about" class="text-white">About Us</a></li>
+                        <li><a href="#features" class="text-white">Features</a></li>
+                        <li><a href="#mission" class="text-white">Mission</a></li>
+                        <li><a href="#events" class="text-white">Events</a></li>
+                        <li><a href="#faculty" class="text-white">Faculty</a></li>
+                        <li><a href="#programs " class="text-white">Programs</a></li>
+
+                    </ul>
+                </div>
+
+                
+                <div class="col-md-4 mb-3">
+                    <h5 class="text-info">Contact Information</h5>
+                    <p>789 Birchwood Drive
+                        Vancouver, BC V6B 2X4
+                        Canada</p>
+                    <p>Email: info@school.com</p>
+                    <p>Phone: (123) 456-7890</p>
+                </div>
+
+               
+                <div class="col-md-4 mb-3">
+                    <h5 class="text-info"> Follow Us</h5>
+                    <ul class="list-unstyled social-icons">
+                        <li><a href="#" class="text-white"><i class="fab fa-facebook-f"></i> Facebook</a></li><br><br>
+                        <li><a href="#" class="text-white"><i class="fab fa-twitter"></i> Twitter</a></li><br><br>
+                        <li><a href="#" class="text-white"><i class="fab fa-instagram"></i> Instagram</a></li><br><br>
+                        <li><a href="#" class="text-white"><i class="fab fa-linkedin-in"></i> LinkedIn</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="text-center mt-3">
+                <p>&copy; 2024 Casepoint Interns. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+
+   
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    @* <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script> *@
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>

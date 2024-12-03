@@ -1,0 +1,207 @@
+@{
+    ViewData["Title"] = "Syllabus Timeline";
+    Layout = "Student";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fees Details</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2024.3.917/js/kendo.all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2024.3.917/styles/kendo.default-v2.min.css" />
+    <style>
+        body,
+        html {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        #feesGrid {
+            width: 100%;
+            height: 50vh;
+            margin: 10px 0;
+        }
+
+        #payActionSheet {
+            width: 100%;
+        }
+
+        .k-actionsheet-container {
+            width: 100% !important;
+        }
+
+        .payment-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="feesGrid"></div>
+    <div id="payActionSheet"></div>
+
+    <script>
+        const userId = 148;
+        var currentDate = new Date();
+        function PayFees(dataItem, paymentMethod) {
+    var currentDate = new Date();
+    var formattedDate = currentDate.toISOString();  
+    var paymentData = {
+        FeeStructureId: dataItem.c_id,
+        UserId: userId,
+        PaymentDate: formattedDate,  
+        Status: "Completed", 
+        CurrentStandard: dataItem.c_currentstandard,  
+    };
+
+    console.log("Sending payment data:", paymentData);
+
+    $.ajax({
+        url: `http://localhost:5064/api/Student/PayFees`,
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(paymentData), 
+        success: function (response) {
+            alert(`Payment by ${paymentMethod} was successful for Enrollment Number: ${dataItem.c_enrollment_number}`);
+            $("#feesGrid").data("kendoGrid").dataSource.read();
+        },
+        error: function (xhr, status, error) {
+            alert(`Payment by ${paymentMethod} failed: ${xhr.responseText}`);
+        }
+    });
+}
+
+        $(document).ready(function () {
+            var actionsheet = $('#payActionSheet').kendoActionSheet({
+                title: 'Select Payment Option',
+                items: [
+                    {
+                        text: 'Pay by Card',
+                        content: `<img src="https://example.com/icons/card-icon.svg" alt="Pay by Card" class="payment-icon"> Pay by Card`,
+                        click: function () {
+                            const dataItem = actionsheet.dataItem;
+                            PayFees(dataItem, 'Card');
+                            actionsheet.close();
+                        }
+                    },
+                    {
+                        text: 'Pay by UPI',
+                        content: `<img src="/banking/upi.png" alt="Pay by UPI" class="payment-icon"> Pay by UPI`,
+                        click: function () {
+                            const dataItem = actionsheet.dataItem;
+                            PayFees(dataItem, 'UPI');
+                            actionsheet.close();
+                        }
+                    },
+                    {
+                        text: 'Pay by Netbanking',
+                        content: `<img src="/banking/atmcard.png" alt="Pay by Netbanking" class="payment-icon"> Pay by Netbanking`,
+                        click: function () {
+                            const dataItem = actionsheet.dataItem;
+                            PayFees(dataItem, 'Netbanking');
+                            actionsheet.close();
+                        }
+                    },
+                    {
+                        text: 'Cancel',
+                        content: `<img src="/banking/cancel-icon.png" alt="Cancel" class="payment-icon"> Cancel`,
+                        group: 'bottom',
+                        click: function () {
+                            actionsheet.close();
+                        }
+                    }
+                ]
+            }).data("kendoActionSheet");
+
+            $("#feesGrid").kendoGrid({
+                dataSource: {
+                    type: "json",
+                    transport: {
+                        read: {
+                            url: `http://localhost:5064/api/Student/GetFeesDetails/${userId}`,
+                            dataType: "json",
+                            type: "GET",
+                        }
+                    },
+                    schema: {
+                        model: {
+                            fields: {
+                                c_paymentid: { type: "number" },
+                                c_enrollment_number: { type: "number" },
+                                c_currentstandard: { type: "string" },
+                                c_amount: { type: "number" },
+                                c_status: { type: "string" },
+                                c_paymentdate: { type: "date" },
+                                c_id: { type: "number" }
+                            }
+                        }
+                    },
+                    pageSize: 20
+                },
+                pageable: true,
+                sortable: true,
+                filterable: true,
+                columns: [
+                    { field: "c_paymentid", title: "Payment ID" },
+                    { field: "c_enrollment_number", title: "Enrollment Number" },
+                    { field: "c_currentstandard", title: "Current Standard" },
+                    { field: "c_amount", title: "Amount", format: "{0:n}" },
+                    { field: "c_status", title: "Status" },
+                    { field: "c_paymentdate", title: "Payment Date", format: "{0:MM/dd/yyyy}" },
+                    {
+                        title: "Action",
+                        command: [
+                            {
+                                name: "pay",
+                                text: "Pay Fee",
+                                visible: function (e) {
+                                    return e.c_status === "Pending";
+                                },
+                                click: function (e) {
+                                    const dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                                    actionsheet.dataItem = dataItem;
+                                    actionsheet.open();
+                                }
+                            },
+                            {
+                                name: "download",
+                                text: "Download Receipt",
+                                visible: function (e) {
+                                    return e.c_status === "Completed";
+                                },
+                                click: function (e) {
+                                    const dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                                    const { jsPDF } = window.jspdf;
+                                    const doc = new jsPDF();
+
+                                    doc.setFontSize(16);
+                                    doc.text("Payment Receipt", 20, 20);
+
+                                    doc.setFontSize(12);
+                                    doc.text(`Payment ID: ${dataItem.c_paymentid}`, 20, 40);
+                                    doc.text(`Enrollment Number: ${dataItem.c_enrollment_number}`, 20, 50);
+                                    doc.text(`Standard: ${dataItem.c_currentstandard}`, 20, 60);
+                                    doc.text(`Amount: ₹${dataItem.c_amount.toFixed(2)}`, 20, 70);
+                                    doc.text(`Payment Status: ${dataItem.c_status}`, 20, 80);
+                                    doc.text(`Payment Date: ${new Date(dataItem.c_paymentdate).toLocaleDateString()}`, 20, 90);
+
+                                    doc.save(`Payment_Receipt_${dataItem.c_paymentid}.pdf`);
+                                }
+                            }
+                        ]
+                    }
+                ]
+            });
+        });
+    </script>
+</body>
+
+</html>

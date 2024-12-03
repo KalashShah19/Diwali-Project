@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Chart from Flask API</title>
+    <script>
+        // Function to fetch the chart image from Flask API and display it
+        function loadChart() {
+            // Fetch the chart image from Flask API
+            fetch("http://localhost:5000/generate-chart")
+                .then(response => response.blob())  // Convert the response to a Blob
+                .then(imageBlob => {
+                    // Create a URL for the image blob
+                    const imageObjectURL = URL.createObjectURL(imageBlob);
+                    // Set the image source to display the chart
+                    document.getElementById("chartImage").src = imageObjectURL;
+                })
+                .catch(error => console.error('Error fetching chart:', error));
+        }
+
+        // Fetch the interactive chart from Flask API and render it in a div
+        function loadInteractiveChart() {
+            fetch("http://localhost:5000/generate-interactive-chart")
+                .then(response => response.text())  // Get HTML string for the Plotly chart
+                .then(chartHtml => {
+                    document.getElementById("chartContainer").innerHTML = chartHtml;
+                })
+                .catch(error => console.error('Error fetching chart:', error));
+        }
+
+        // Call loadInteractiveChart() when the page loads
+        window.onload = loadCharts;
+
+        function loadCharts(){
+            loadChart();
+            loadInteractiveChart();
+        }
+    </script>
+
+</head>
+
+<body>
+    <h1>Chart Generated from Flask API</h1>
+    <img id="chartImage" alt="Chart Image"  /> <br> <br>
+    <div id="chartContainer"></div>
+
+</body>
+
+</html>

@@ -1,0 +1,178 @@
+@{
+    ViewData["Title"] = "Feedback";
+    Layout = "Student";
+}
+
+<h1>Feedback By Student</h1>
+<br><br>
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title></title>
+
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2022.1.301/styles/kendo.default-v2.min.css" />
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2022.1.301/js/kendo.all.min.js"></script>
+
+</head>
+
+<body>
+    <div id="example">
+        <input type="hidden" value="@ViewBag.UserID">
+
+        <div class="demo-section">
+            <h3>Select Teacher</h3>
+            <!-- Teacher dropdown list -->
+            <select id="teacherDropdown"></select>
+        </div><br><br>
+        <div class="demo-section">
+            <h3>Rate Your Experience</h3>
+            <input id="slider" class="balSlider" title="slider" />
+        </div>
+
+        <br><br>
+        <label for="" class="custom-label   ">
+            <h3>Leava a Comment...</h3>
+        </label>
+        <textarea id="textarea"></textarea>
+        <br><br><br>
+        <button id="primaryTextButton">Send Feedback</button>
+
+
+
+        <script>
+            $(document).ready(function () {
+
+
+                $.ajax({
+                    url: "http://localhost:5064/api/Student/GetTeacher",
+                    type: "GET",
+                    success: function (data) {
+                        $("#teacherDropdown").kendoDropDownList({
+                            dataTextField: "c_name",
+                            dataValueField: "c_user_id",
+                            dataSource: data,
+                            optionLabel: "Select a teacher..."
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        console.log("Error fetching teachers: " + error);
+                    }
+                });
+
+                var slider = $("#slider").kendoSlider({
+                    increaseButtonTitle: "Right",
+                    decreaseButtonTitle: "Left",
+                    min: 0,
+                    max: 5,
+                    smallStep: 1,
+                    largeStep: 1,
+                    change: function (e) {
+                        console.log("Slider value: " + e.value);
+                    }
+                }).data("kendoSlider");
+
+                $("#textarea").kendoTextArea({
+                    value: "",
+                    fillMode: "flat",
+                    rows: 4,
+                    maxLength: 200,
+                    placeholder: "Enter Comment here...",
+
+                });
+
+                $("#primaryTextButton").kendoButton({
+                    themeColor: "primary"
+                });
+
+                $("#primaryTextButton").click(function () {
+                    var today = new Date();
+                    var formattedDate = today.getFullYear().toString();
+
+
+                    var studentID = "148";
+                    var teacherID = $("#teacherDropdown").val();
+                    var rating = slider.value();
+                    var comment = $("#textarea").val();
+
+                    // Validation
+                    if (!teacherID) {
+                        alert("Please select a teacher.");
+                        return;
+                    }
+
+                    if (rating < 1 || rating > 5) {
+                        alert("Please provide a rating between 1 and 5.");
+                        return;
+                    }
+
+                    var feedback = {
+                        studentID: "@ViewBag.UserID",
+                        teacherID: $("#teacherDropdown").val(),
+                        Rating: slider.value(),
+                        Comment: $("#textarea").val(),
+                        BatchYear: formattedDate
+                    };
+                    console.log(feedback);
+                    $.ajax({
+                        url: "http://localhost:5064/api/Student/CreateStudentFeedback",
+                        type: "POST",
+                        contentType: "application/json",
+                        data: JSON.stringify(feedback),
+                        success: function (response) {
+                            if (response) {
+                                alert(response);
+
+                            } else {
+                                alert(response);
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            alert("Error sending feedback: " + error);
+                        }
+                    });
+                });
+
+            });
+
+
+        </script>
+
+        <style>
+            .demo-section {
+                text-align: left;
+            }
+
+            h3 {
+                color: coral;
+            }
+
+            #equalizer {
+                padding-right: 15px;
+            }
+
+            div.balSlider {
+                width: 100%;
+            }
+
+            .custom-label {
+                color: #FF5733;
+            }
+
+
+            div.balSlider .k-slider-selection {
+                display: none;
+            }
+
+            #textarea {
+                border: 2px solid #faf2f0;
+                border-radius: 4px;
+            }
+        </style>
+    </div>
+</body>
+
+</html>

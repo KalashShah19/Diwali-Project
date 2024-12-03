@@ -1,0 +1,98 @@
+@{
+    ViewData["Title"] = "Feedback List";
+    Layout = "Teacher";
+}
+
+
+
+<h2 style="display: inline-block;">@ViewData["Title"]</h2>
+<h3 style="float:right;">Average: <span id="avgRating"></span></h3><br>
+<h4 style="float:right; inline-block">(<span id="rcount"></span>) reviews <span id="avgRating"></span></h4><br><br> 
+
+
+<link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.2.616/styles/kendo.common.min.css" />
+<link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.2.616/styles/kendo.default.min.css" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://kendo.cdn.telerik.com/2021.2.616/js/kendo.all.min.js"></script>
+
+<div id="grid"></div>
+
+<script>
+    $(document).ready(function () {
+        var sessionId = "119";
+        console.log(sessionId);
+
+        
+        GetCount(sessionId);
+        function GetCount(id) {
+            $.ajax({
+                url: 'http://localhost:5064/api/Teacher/GetFeedbackCount',
+                type: 'GET',
+                data: { id: id },
+                dataType: 'json',
+                contentType: 'application/json; charset:utf-8',
+                success: function (data) {
+                    $('#avgRating').text(parseFloat(data.avgrating).toFixed(2)+'★');
+                    $('#rcount').text(data.count);
+                    console.log(data);
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+        var dataSource = new kendo.data.DataSource({
+            transport: {
+                read: {
+                    url: "http://localhost:5064/api/Teacher/GetFeedBacks?id=" + sessionId,
+                    type: "GET",
+                    dataType: "json"
+                }
+            },
+            pageSize: 10,
+            schema: {
+                model: {
+                    fields: {
+                        rating: { type: "number", validation: { required: true } },
+                        comment: { type: "string", validation: { required: true } },
+                        batchYear: { type: "string", validation: { required: true } },
+                        feedbackDate: { type: "date", validation: { required: true } }
+                    }
+                }
+            }
+        });
+
+        $("#grid").kendoGrid({
+            dataSource: dataSource,
+            columns: [
+                { field: "rating", title: "Rating" },
+                {
+                    field: "comment",
+                    title: "Comment"
+                },
+                {
+                    field: "batchYear",
+                    title: "Batch Year"
+                },
+                {
+                    field: "feedbackDate",
+                    title: "Feedbac kDate",
+                    format: "{0:MM/dd/yyyy}"
+                }
+            ],
+            pageable: true,
+            sortable: true,
+            filterable: true
+        });
+
+        dataSource.bind("requestEnd", function (e) {
+            if (e.type === "create" || e.type === "update" || e.type === "destroy") {
+                dataSource.read();
+            }
+        });
+
+        $("#grid").on("click", ".k-grid-cancel-changes", function () {
+            dataSource.cancelChanges();
+        });
+    });
+</script>

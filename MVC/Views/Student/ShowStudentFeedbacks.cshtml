@@ -1,0 +1,76 @@
+@{
+    ViewData["title"] = "Feedbacks";
+    Layout = "Student";
+}
+<link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.2.616/styles/kendo.common.min.css" />
+<link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.2.616/styles/kendo.default.min.css" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://kendo.cdn.telerik.com/2021.2.616/js/kendo.all.min.js"></script>
+
+<div id="grid"></div>
+
+<script>
+    $(document).ready(function () {
+        // Hardcoded sessionId for testing, ensure this matches the correct student ID in production
+        var sessionId = 148;  
+        
+        // Debug: Log the session ID to confirm it's correct
+        console.log("Session ID:", sessionId);
+
+        // Define the data source for the Kendo Grid
+        var dataSource = new kendo.data.DataSource({
+            transport: {
+                read: {
+                    url: "http://localhost:5064/api/Student/GetStdFeedback?id=" + sessionId,
+                    type: "POST",
+                    dataType: "json",
+                    complete: function(e) {
+                        console.log("API response:", e.responseJSON); // Log response to confirm field names
+                    }
+                }
+            },
+
+            pageSize: 10,
+            schema: {
+                data: function(response) {
+                    // Debug: Log the data to confirm that TeacherName and other fields are present
+                    console.log("Response Data:", response);
+                    return response;
+                },
+                model: {
+                    fields: {
+                        teacherName: { type: "string", editable: false, nullable: false },
+                        rating: { type: "number", validation: { required: true } },
+                        comment: { type: "string", validation: { required: true } },
+                        batchYear: { type: "string", validation: { required: true } },
+                        feedbackDate: { type: "date", validation: { required: true } }
+                    }
+                }
+            }
+        });
+        $("#grid").kendoGrid({
+            dataSource: dataSource,
+            columns: [
+                { field: "teacherName", title: "Teacher Name" },
+                { field: "rating", title: "Rating" },
+                { field: "comment", title: "Comment" },
+                { field: "batchYear", title: "Batch Year" },
+                { field: "feedbackDate", title: "Feedback Date", format: "{0:MM/dd/yyyy}" }
+            ],
+            pageable: true,
+            sortable: true,
+            filterable: true
+        });
+
+        
+        dataSource.bind("requestEnd", function (e) {
+            if (e.type === "create" || e.type === "update" || e.type === "destroy") {
+                dataSource.read();
+            }
+        });
+
+        $("#grid").on("click", ".k-grid-cancel-changes", function () {
+            dataSource.cancelChanges();
+        });
+    });
+</script>

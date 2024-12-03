@@ -1,0 +1,357 @@
+@{
+    ViewData["Title"] = "Syllabus Timeline";
+    Layout = "Student";
+}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2024.1.119/styles/kendo.default-v2.min.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2024.1.119/js/kendo.all.min.js"></script>
+    <style>
+        #cardsContainer {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+
+        /* Card layout styles */
+        .k-card .k-card-header h5 {
+            margin: 0;
+            font-weight: bold;
+            color: #4a4a4a;
+        }
+
+        .k-card .k-card-body p {
+            margin: 0;
+            font-size: 1.1em;
+            color: #333;
+        }
+
+        /* Styling the Edit Profile button */
+        .edit-button {
+            display: inline-block;
+            background-color: #1a73e8;
+            /* Blue color */
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-align: center;
+            width: auto;
+            margin: 20px auto;
+        }
+
+        /* Hover effect for the Edit Profile button */
+        .edit-button:hover {
+            background-color: #0f5bb5;
+        }
+
+        /* Styling Save Changes button in Kendo Window */
+        #saveChangesButton {
+            background-color: #4caf50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .profile-image {
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        label.error {
+            color: red;
+        }
+
+        #saveChangesButton:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="cardsContainer" class="k-cards-container"></div>
+
+    <div id="editProfileWindow" style="display: none;">
+        <form id="editProfileForm" enctype="multipart/form-data">
+
+            <label for="profileImage">Profile Image</label>
+            <br>
+            <img id="profileImagePreview" class="profile-image" src="#" alt="Profile Image Preview"
+                style="width: 150px; height: 150px; object-fit: cover; margin-top: 10px;" />
+            <br><br>
+
+            <label for="profileImage">Change Profile Image</label>
+            <input id="profileImage" name="profileImage" type="file" accept="image/*" />
+            <br><br>
+
+            <label for="name">Name</label>
+            <input id="name" name="name" class="k-textbox" style="width: 100%;" required /><br><br>
+
+            <label for="email">Email</label>
+            <input id="email" name="email" class="k-textbox" style="width: 100%;" required /><br><br>
+
+            <label for="mobileNumber">Mobile Number</label>
+            <input id="mobileNumber" name="mobileNumber" class="k-textbox" style="width: 100%;" required /><br><br>
+
+            <label for="gender">Gender</label>
+            <select id="gender" name="gender" class="k-dropdown" style="width: 100%;" required>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Others">Others</option>
+            </select><br><br>
+
+            <label for="birthDate">Birth Date</label>
+            <input id="birthDate" name="birthDate" class="k-datepicker" style="width: 100%;" required /><br><br>
+
+            <label for="address">Address</label>
+            <textarea id="address" name="address" class="k-textarea" style="width: 100%;" required></textarea><br><br>
+
+            <button type="button" id="saveChangesButton" class="k-button k-primary">Save Changes</button>
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+
+    <script>
+        const apihost = "http://localhost:5064";
+        $(document).ready(function () {
+        @* var userId = 148; *@
+            var userId = 0;
+
+            $("#editProfileForm").validate({
+                rules: {
+                    name: {
+                        required: true,
+                        minlength: 2
+                    },
+                    email: {
+                        required: true,
+                        email: true
+                    },
+                    mobileNumber: {
+                        required: true,
+                        digits: true,
+                        minlength: 10,
+                        maxlength: 15
+                    },
+                    gender: {
+                        required: true
+                    },
+                    birthDate: {
+                        required: true,
+                        date: true
+                    },
+                    address: {
+                        required: true
+                    }
+                },
+                messages: {
+                    name: {
+                        required: "Please enter your name.",
+                        minlength: "Your name must be at least 2 characters long."
+                    },
+                    email: {
+                        required: "Please enter your email.",
+                        email: "Please enter a valid email address."
+                    },
+                    mobileNumber: {
+                        required: "Please enter your mobile number.",
+                        digits: "Only numbers are allowed.",
+                        minlength: "Your mobile number must be at least 10 digits long.",
+                        maxlength: "Your mobile number can't be longer than 15 digits."
+                    },
+                    gender: {
+                        required: "Please select your gender."
+                    },
+                    birthDate: {
+                        required: "Please enter your birth date.",
+                        date: "Please enter a valid date."
+                    },
+                    address: {
+                        required: "Please enter your address."
+                    }
+                },
+                submitHandler: function (form) {
+                    form.submit();
+                }
+            });
+
+
+        @* $("#saveChangesButton").click(function () {
+                if ($("#editProfileForm").valid()) {
+
+                }
+            }); *@
+
+
+                $("#birthDate").kendoDatePicker({
+                    format: "yyyy-MM-dd",
+                    max: new Date()
+                });
+
+
+            var editProfileWindow = $("#editProfileWindow").kendoWindow({
+                title: "Edit Profile",
+                visible: false,
+                modal: true,
+                width: "400px"
+            }).data("kendoWindow");
+
+            @* $.ajax({
+                url: 'http://localhost:5064/api/Student/getSession',
+                type: 'GET',
+                success: function (data) {
+                    console.log(data);
+                    userId = data;
+                },
+                error: function () {
+                    alert("Failed to get getSession id.");
+                }
+            }); *@
+
+            $.ajax({
+                url: 'http://localhost:5064/api/Student/getSession',
+                type: 'GET',
+                success: function (data) {
+                    console.log('Session ID :', data);
+                    userId = data;
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error('Error fetching session:', textStatus, errorThrown);
+                    alert('Failed to get session ID.');
+                }
+            });
+
+
+            $.ajax({
+                url: `http://localhost:5064/api/Student/GetProfileById/${userId}`,
+                type: 'GET',
+                success: function (data) {
+                    renderProfileCards(data);
+                },
+                error: function () {
+                    alert("Failed to load profile data.");
+                }
+            });
+
+            function renderProfileCards(data) {
+                console.log(data.imagepath, data);
+                var cardsHtml = `
+                <div class="k-card">
+                    <div class="k-card-header"><h5>Profile Image</h5></div>
+                    <div class="k-card-body">
+                        <img src="${apihost}/${data.imagepath}"  alt="Profile Image" class="profile-image" width="100" height="100"/>
+                    </div>
+                </div>
+                <div class="k-card">
+                    <div class="k-card-header"><h5>Name</h5></div>
+                    <div class="k-card-body"><p>${data.name}</p></div>
+                </div>
+                <div class="k-card">
+                    <div class="k-card-header"><h5>Email</h5></div>
+                    <div class="k-card-body"><p>${data.email}</p></div>
+                </div>
+                <div class="k-card">
+                    <div class="k-card-header"><h5>Mobile Number</h5></div>
+                    <div class="k-card-body"><p>${data.mobileNumber}</p></div>
+                </div>
+        @*n<div class="k-card">
+                            <div class="k-card-header"><h5>Gender</h5></div>
+                            <div class="k-card-body"><p>${data.gender}</p></div>
+                </div> *@
+                <div class="k-card">
+                    <div class="k-card-header"><h5>Birth Date</h5></div>
+                    <div class="k-card-body"><p>${data.birthDate}</p></div>
+                </div>
+                <div class="k-card">
+                    <div class="k-card-header"><h5>Address</h5></div>
+                    <div class="k-card-body"><p>${data.address}</p></div>
+                </div>
+
+                <button id="editButton" class="edit-button">Edit Profile</button>
+            `;
+
+                $("#cardsContainer").html(cardsHtml);
+
+
+                $("#editButton").click(function () {
+                    $("#name").val(data.name);
+                    $("#email").val(data.email);
+                    $("#mobileNumber").val(data.mobileNumber);
+                    $("#gender").val(data.gender);
+                    $("#birthDate").data("kendoDatePicker").value(new Date(data.birthDate));
+                    $("#address").val(data.address);
+
+                    $("#profileImagePreview").attr("src", `${apihost}/${data.imagepath}`).show();
+
+                    editProfileWindow.center().open();
+                });
+            }
+
+            function previewProfileImage() {
+                const file = document.getElementById('profileImage').files[0];
+                const preview = document.getElementById('profileImagePreview');
+
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        preview.src = e.target.result;
+                        preview.style.display = 'block';
+                    }
+                    reader.readAsDataURL(file);
+                }
+            }
+
+
+            $("#saveChangesButton").click(function () {
+                var formData = new FormData();
+                formData.append("name", $("#name").val());
+                formData.append("email", $("#email").val());
+                formData.append("mobileNumber", $("#mobileNumber").val());
+                formData.append("gender", $("#gender").val());
+                formData.append("birthDate", $("#birthDate").val());
+                formData.append("address", $("#address").val());
+                var profileImage = $("#profileImage").prop("files")[0];
+                console.log(profileImage);
+                if (profileImage) {
+                    formData.append("image", profileImage);
+                }
+                if ($("#editProfileForm").valid()) {
+                    $.ajax({
+                        url: `http://localhost:5064/api/Student/UpdateStudentProfile/${userId}`,
+                        type: 'PUT',
+                        data: formData,
+                        contentType: false,
+                        processData: false,
+                        success: function () {
+                            editProfileWindow.close();
+                            alert("Profile updated successfully!");
+                            location.reload();
+                        },
+                        error: function () {
+                            alert("Failed to update profile.");
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+
+</body>
+
+</html>
