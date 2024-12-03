@@ -1,6 +1,0 @@
-Kendo UI Charts Links - 
-    Gantt - https://demos.telerik.com/kendo-ui/gantt/index
-    Bar - https://demos.telerik.com/kendo-ui/bar-charts/index
-    Bar Columns - https://demos.telerik.com/kendo-ui/bar-charts/column
-    Bar with Data Binding - https://demos.telerik.com/kendo-ui/bar-charts/remote-data-binding
-    Pie - https://demos.telerik.com/kendo-ui/pie-charts/index
