@@ -527,22 +527,25 @@
                         hasError = true;
                     }
                     else {
-
-
                         $.ajax({
                             url: "http://localhost:5064/api/Login/Login",
                             type: "POST",
                             contentType: "application/json",
                             data: JSON.stringify(user),
                             success: function (response) {
-                                console.log(response?.c_user_id, "responseresponse")
                                 const c_user_id = response.c_user_id;
+                                const c_role = response.c_role;
+                                console.log("id = ",c_user_id,"role = ", c_role )
                                 if (c_user_id !== null) {
                                     localStorage.setItem("c_user_id", c_user_id);
-        @* HttpContext.Session.SetString("UserId", c_user_id.ToString()); *@
                                         notification.show({ message: "Login successful" }, "success");
                                     setTimeout(function () {
-                                        window.location.href = "/Student/";
+                                        if(c_role == "Student")
+                                            window.location.href = "/Student/";
+                                        if(c_role == "Teacher")
+                                            window.location.href = "/Teacher/";
+                                        if(c_role == "Admin")
+                                            window.location.href = "/Admin/";
                                     }, 1000);
                                 } else {
                                     alert("Login failed!");
@@ -554,7 +557,7 @@
 
                             },
                             error: function (error) {
-                                $("#loader").hide();  // Hide loader when error occurs
+                                $("#loader").hide();
                                 $(".login-container").removeClass("blur");
                                 $("#captchaInput").val("");
                                 generateCaptcha(event);

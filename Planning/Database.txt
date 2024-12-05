@@ -64,18 +64,26 @@ TimeTable
     CWSID
     Day
 
-Fees
-    feesID
+Fees_structure
+    ID
     Amount
-    Year
-    standardID
+    batch_Year
+    standard
+
+Payments
+    Payment_id
+    userID
+    id
+    paymentdate
+    status
+    currentstandard
 
 Syllabus
     CWSID
     chapterName
     startDate
     endDate
-    status
+    completed (percentage)
 
 SchoolInfo 
     Name (Not Database)

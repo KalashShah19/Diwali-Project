@@ -1,0 +1,12 @@
+Gender Distribution - Percentage of users (Admin, Teacher, Student) by gender.
+Age Distribution - Distribution of users by age groups.
+Students under Teachers
+Studying vs Left Students
+Teachers by Standard
+Teacher Education Levels - Pie chart 
+Materials by Subject - Bar chart
+Material types - pie chart
+Fees by Standard
+Yearly Revenue
+Syllabus Status - Pie chart of completed vs. pending syllabus chapters.
+Feedback Ratings - Pie chart 

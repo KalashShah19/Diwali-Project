@@ -53,7 +53,7 @@ namespace WebAPI.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    int? c_user_id = loginRepository.ValidateUser(login);
+                    (int? c_user_id, string c_role) = loginRepository.ValidateUser(login);
                     Console.WriteLine(c_user_id.ToString());
 
                     if (c_user_id.HasValue)
@@ -63,7 +63,7 @@ namespace WebAPI.Controllers
                         Console.WriteLine("inside");
                         return StatusCode(
                             StatusCodes.Status200OK,
-                            new { message = "Login successful", c_user_id = c_user_id }
+                            new { message = "Login successful", c_user_id = c_user_id, c_role = c_role }
                         );
                     }
                     else

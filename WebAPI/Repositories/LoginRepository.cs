@@ -29,7 +29,7 @@ public class LoginRepository : ILoginRepository
         mailer = new();
     }
 
-    public int? ValidateUser(Login Login)
+    public (int?,string?) ValidateUser(Login Login)
     {
         try
         {
@@ -47,7 +47,7 @@ public class LoginRepository : ILoginRepository
 
             NpgsqlCommand cmd =
                 new(
-                    "SELECT c_user_id  FROM t_users WHERE c_email = @c_email AND c_password = @password AND c_verified = true",
+                    "SELECT c_user_id, c_role  FROM t_users WHERE c_email = @c_email AND c_password = @password AND c_verified = true",
                     connection
                 );
 
@@ -59,8 +59,9 @@ public class LoginRepository : ILoginRepository
             {
                 Console.WriteLine("verified");
                 int c_user_id = dr.GetInt32(0);
+                string c_role = dr.GetString(1);
                 connection.Close();
-                return c_user_id;
+                return (c_user_id, c_role);
                 // int count = Convert.ToInt32(dr[0]);
 
                 // return count > 0;
@@ -71,7 +72,7 @@ public class LoginRepository : ILoginRepository
         {
             Console.WriteLine($"Error adding user: {ex.Message}");
         }
-        return null;
+        return (null,null);
     }
 
     public (string, string) RequestPasswordChange(string email)

@@ -1,110 +1,49 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Charts Gallery</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f7fa;
-            margin: 0;
-            padding: 0;
-            max-height: 100vh;
+    <title>Chart from Flask API</title>
+    <script>
+        // Function to fetch the chart image from Flask API and display it
+        function loadChart() {
+            // Fetch the chart image from Flask API
+            fetch("http://localhost:5000/generate-chart")
+                .then(response => response.blob())  // Convert the response to a Blob
+                .then(imageBlob => {
+                    // Create a URL for the image blob
+                    const imageObjectURL = URL.createObjectURL(imageBlob);
+                    // Set the image source to display the chart
+                    document.getElementById("chartImage").src = imageObjectURL;
+                })
+                .catch(error => console.error('Error fetching chart:', error));
         }
 
-        h1 {
-            color: #333;
-            margin-top: 30px;
-            font-size: 36px;
+        // Fetch the interactive chart from Flask API and render it in a div
+        function loadInteractiveChart() {
+            fetch("http://localhost:5000/generate-interactive-chart")
+                .then(response => response.text())  // Get HTML string for the Plotly chart
+                .then(chartHtml => {
+                    document.getElementById("chartContainer").innerHTML = chartHtml;
+                })
+                .catch(error => console.error('Error fetching chart:', error));
         }
 
-        .charts-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-            width: 80%;
-            margin-top: 40px;
-            margin-left: auto;
-            margin-right: auto;
-        }
+        // Call loadInteractiveChart() when the page loads
+        window.onload = loadCharts;
 
-        .chart-card {
-            position: relative;
-            background-color: white;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
+        function loadCharts(){
+            loadChart();
+            loadInteractiveChart();
         }
+    </script>
 
-        .chart-card img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            transition: opacity 0.3s ease;
-        }
-
-        .chart-card:hover {
-            transform: scale(1.05);
-        }
-
-        .chart-card:hover img {
-            opacity: 0.8;
-        }
-
-        .chart-card h2 {
-            text-align: center;
-            color: #333;
-            margin: 10px 0;
-            font-size: 20px;
-            font-weight: bold;
-        }
-
-        .chart-card a {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 10;
-        }
-
-        .container {
-            text-align: center;
-        }
-
-    </style>
 </head>
+
 <body>
-    <div class="container">
-        <h1>Charts Gallery</h1>
-        <div class="charts-container">
-            <div class="chart-card">
-                <a href="http://localhost:5000/subjects"></a>
-                <img src="https://clipart-library.com/newhp/25-257420_clip-art-transparent-background-school-subjects-clipart.png" alt="">
-                <h2>Chart 1</h2>
-            </div>
+    <h1>Chart Generated from Flask API</h1>
+    <img id="chartImage" alt="Chart Image"  /> <br> <br>
+    <div id="chartContainer"></div>
 
-            <div class="chart-card">
-                <a href="/chart2-page"></a>
-                <img src="http://localhost:5000/sports" alt="Chart 2">
-                <h2>Chart 2</h2>
-            </div>
-
-            <div class="chart-card">
-                <a href="/chart3-page"></a>
-                <img src="http://localhost:5000/teachers" alt="Chart 3">
-                <h2>Chart 3</h2>
-            </div>
-
-            <div class="chart-card">
-                <a href="/chart4-page"></a>
-                <img src="http://localhost:5000/courses" alt="Chart 4">
-                <h2>Chart 4</h2>
-            </div>
-        </div>
-    </div>
 </body>
+
 </html>

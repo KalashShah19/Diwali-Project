@@ -8,7 +8,7 @@ namespace WebAPI.Repositories;
 
      interface ILoginRepository
     {
-         int? ValidateUser(Login Login);
+         (int?,string?) ValidateUser(Login Login);
          (string,string) RequestPasswordChange(string email);
          string? Newpassword(Forgotpassword Forgotpassword);
     }
