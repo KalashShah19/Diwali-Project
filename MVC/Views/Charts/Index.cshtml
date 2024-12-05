@@ -1,5 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+@{
+    Layout = "Admin";
+    ViewData["title"] = "Charts";
+}
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,7 +24,7 @@
             font-size: 36px;
         }
 
-        .charts-container {
+        @* .charts-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 20px;
@@ -30,6 +35,25 @@
         }
 
         .chart-card {
+            position: relative;
+            background-color: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        } *@
+
+        .charts-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* Creates 4 equal columns */
+            gap: 20px; /* Space between cards */
+            width: 80%; /* Adjusts container width */
+            margin-top: 40px;
+        }
+
+        .chart-card {
+            width: 300px;
             position: relative;
             background-color: white;
             border: 2px solid #e0e0e0;
@@ -74,37 +98,85 @@
         .container {
             text-align: center;
         }
-
     </style>
 </head>
+
 <body>
     <div class="container">
-        <h1>Charts Gallery</h1>
+        <h1>Charts</h1>
         <div class="charts-container">
+
             <div class="chart-card">
-                <a href="http://localhost:5000/subjects"></a>
-                <img src="https://clipart-library.com/newhp/25-257420_clip-art-transparent-background-school-subjects-clipart.png" alt="">
-                <h2>Subjects</h2>
+                <a href="http://127.0.0.1:5000/yearly-revenue"></a>
+                <img src="https://imgs.search.brave.com/65g-qGYiWMb12kvk5LIHfxjZfPm-IZ7Y93Ec1zsU9IU/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly90aHVt/YnMuZHJlYW1zdGlt/ZS5jb20vYi9yZXZl/bnVlLTEwNDAyOTkx/LmpwZw"
+                    alt="Chart 4">
+                <h2>Income</h2>
             </div>
 
             <div class="chart-card">
-                <a href="/chart2-page"></a>
-                <img src="https://st2.depositphotos.com/1496387/7584/v/950/depositphotos_75844607-stock-illustration-education-schooling-vector-logo-design.jpg" alt="Chart 2">
-                <h2>Students</h2>
+                <a href="http://127.0.0.1:5000/gender-distribution"></a>
+                <img src="https://imgs.search.brave.com/Cf5-mj1rMPlmOiD5klqUbZZQYbK7r61ixPpU9fGjYPc/rs:fit:860:0:0:0/g:ce/aHR0cDovL2ltYWdl/cy5jbGlwYXJ0cGFu/ZGEuY29tL2dlbmRl/ci1jbGlwYXJ0LWdl/bmRlci1zaWducy1j/bGlwYXJ0LTEuanBn"
+                    alt="">
+                <h2>Gender Distribution</h2>
             </div>
 
             <div class="chart-card">
-                <a href="/chart3-page"></a>
-                <img src="https://img.freepik.com/premium-vector/vector-logo-illustration-teacher-mascot-cartoon-style_116762-8535.jpg" alt="Chart 3">
-                <h2>Teachers</h2>
+                <a href="http://127.0.0.1:5000/age-distribution"></a>
+                <img src="https://kalashshah19.github.io/img/students_edited.png"
+                    alt="Chart 2">
+                <h2>Students - Age Distribution</h2>
             </div>
 
             <div class="chart-card">
-                <a href="/chart4-page"></a>
-                <img src="https://cdn5.vectorstock.com/i/1000x1000/72/29/courses-course-learning-guide-logo-design-vector-23807229.jpg" alt="Chart 4">
-                <h2>Courses</h2>
+                <a href="http://127.0.0.1:5000/age-distribution-teachers"></a>
+                <img src="https://kalashshah19.github.io/img/teachers_edited.jpg"
+                    alt="Chart 3">
+                <h2>Teachers - Age Distribution</h2>
+            </div>
+
+            <div class="chart-card">
+                <a href="http://127.0.0.1:5000/studying-vs-left-students"></a>
+                <img src="https://kalashshah19.github.io/img/left%20vs%20studying.jpg"
+                    alt="Chart 4">
+                <h2>Studying vs Left Students</h2>
+            </div>
+
+            <div class="chart-card">
+                <a href="http://127.0.0.1:5000/teachers-by-standard"></a>
+                <img src="https://imgs.search.brave.com/aoCHnwImDyjimlGvcWdAdeKqJ47emoKFiyf8LSPqOZ8/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWcu/ZnJlZXBpay5jb20v/ZnJlZS12ZWN0b3Iv/dGVhY2hlci10ZWFj/aGluZy1zdHVkZW50/cy1jbGFzc3Jvb20t/c2NlbmVfMTMwOC02/NzUzMS5qcGc_c2Vt/dD1haXNfaHlicmlk"
+                    alt="Chart 4">
+                <h2>Teachers by Standards</h2>
+            </div>
+
+            <div class="chart-card">
+                <a href="http://127.0.0.1:5000/teacher-education-levels"></a>
+                <img src="https://imgs.search.brave.com/MFLT8Hp1nqM-pYKS2rF_VM0rdCXmLMzjfhlKC6_qhBQ/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jbGlw/YXJ0cy56b25lL2lt/Zy8xNTc5OTIuanBn"
+                    alt="Chart 4">
+                <h2>Teachers Qualifications</h2>
+            </div>
+
+            <div class="chart-card">
+                <a href="http://127.0.0.1:5000/fees-by-standard"></a>
+                <img src="https://imgs.search.brave.com/zZB_uQ98VB-JxNz7YnhcQCZGpALMmeTm4muPCRe7P_M/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvMTM5/NDA2ODU4My9waG90/by9mZWVzLmpwZz9z/PTYxMng2MTImdz0w/Jms9MjAmYz1zQUVI/ZVMxOGg0eXlfOW5x/V3RvZ3BDS1oydjBu/RTFZTHN0RWNReUdP/Nmp3PQ"
+                    alt="Chart 4">
+                <h2>Fees by Standards</h2>
+            </div>
+
+            <div class="chart-card">
+                <a href="http://127.0.0.1:5000/syllabus-status"></a>
+                <img src="https://sksworldschool.com/wp-content/uploads/2019/03/syllabus.jpg"
+                    alt="Chart 4">
+                <h2>Syllabus Status</h2>
+            </div>
+
+            <div class="chart-card">
+                <a href="http://127.0.0.1:5000/feedback-ratings"></a>
+                <img src="https://images.freeimages.com/clg/istock/previews/9573/95738641-feedback-chart-with-keywords-and-icons-sketch.jpg"
+                    alt="Chart 4">
+                <h2>Feedback Ratings</h2>
             </div>
         </div>
     </div>
 </body>
+
 </html>

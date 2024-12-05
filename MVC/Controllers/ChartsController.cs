@@ -8,9 +8,4 @@ public class ChartsController : Controller
     {
         return View();
     }
-    
-    public IActionResult Interactive()
-    {
-        return View();
-    }
 }
