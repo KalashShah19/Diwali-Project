@@ -319,11 +319,9 @@ def fees_by_standard():
 @app.route('/yearly-revenue')
 def yearly_revenue():
     try:
-        # Connect to PostgreSQL
         conn = psycopg2.connect(**DB_CONFIG)
         cursor = conn.cursor()
 
-        # SQL query to get total revenue by year
         query = """
             SELECT
             fs.c_batch_year AS year,
@@ -350,6 +348,7 @@ def yearly_revenue():
         # Prepare data for the line chart
         years = [str(int(row[0])) for row in data]  # Extract and format the year
         revenue = [row[1] for row in data]  # Extract total revenue for each year
+        print(revenue)
 
         # Generate the line chart with green color
         fig = px.line(

@@ -27,6 +27,8 @@ public class AdminController : Controller
     public IActionResult AdmitStudents() => View();
     public IActionResult ViewSyllabus() => View();
 
+    public IActionResult TimeTable()=> View();
+
     [HttpGet]
     [Route("Admin/GetSyllabusTimelineData/{cwsid}")]
     public JsonResult GetSyllabusTimelineData(int cwsid)
