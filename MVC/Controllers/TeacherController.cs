@@ -21,6 +21,12 @@ namespace MVC.Controllers
             con = new NpgsqlConnection(connectionString);
         }
 
+        public IActionResult Index(int c_user_id)
+        {
+            HttpContext.Session.SetString("c_user_id", c_user_id.ToString());
+            return View("Timetable");
+        }
+
         public IActionResult Timetable1()
         {
             return View("Timetable");

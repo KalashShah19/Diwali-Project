@@ -58,8 +58,8 @@ namespace WebAPI.Controllers
 
                     if (c_user_id.HasValue)
                     {
-                        HttpContext.Session.SetString("c_user_id",c_user_id.ToString());
-                        Console.WriteLine("session id = "+ HttpContext.Session.GetString("c_user_id"));
+                        // HttpContext.Session.SetString("c_user_id",c_user_id.ToString());
+                        // Console.WriteLine("session id = "+ HttpContext.Session.GetString("c_user_id"));
                         Console.WriteLine("inside");
                         return StatusCode(
                             StatusCodes.Status200OK,

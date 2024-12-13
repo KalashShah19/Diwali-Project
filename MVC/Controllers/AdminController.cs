@@ -14,7 +14,12 @@ public class AdminController : Controller
         con = new NpgsqlConnection(connectionString);
     }
 
-    public IActionResult Index() => View();
+    public IActionResult Index(int c_user_id)
+    {
+        HttpContext.Session.SetString("c_user_id", c_user_id.ToString());
+        return View();
+    }
+
     public IActionResult ManageStandard() => View();
     public IActionResult ManageFeeStructure() => View();
     public IActionResult ManageSchoolInfo() => View();
@@ -27,7 +32,7 @@ public class AdminController : Controller
     public IActionResult AdmitStudents() => View();
     public IActionResult ViewSyllabus() => View();
 
-    public IActionResult TimeTable()=> View();
+    public IActionResult TimeTable() => View();
 
     [HttpGet]
     [Route("Admin/GetSyllabusTimelineData/{cwsid}")]

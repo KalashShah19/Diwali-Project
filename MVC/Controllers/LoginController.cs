@@ -36,8 +36,12 @@ namespace MVC.Controllers
         {
             return View("Forgotpassword");
         }
-
-
+        
+        public IActionResult setSession(int c_user_id)
+        {
+            HttpContext.Session.SetString("c_user_id",c_user_id.ToString());
+            return View();
+        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

@@ -21,7 +21,12 @@ namespace MVC.Controllers
             con = new NpgsqlConnection(connectionString);
         }
 
-        public IActionResult Index() => View("UpdateProfile");
+        public IActionResult Index(int c_user_id)
+        {
+            HttpContext.Session.SetString("c_user_id", c_user_id.ToString());
+            return View("UpdateProfile");
+        }
+        
         public IActionResult SchoolInfo() => View();
         public IActionResult UpdateProfile() => View();
         public IActionResult StudentTimeTable() => View();

@@ -538,14 +538,15 @@
                                 console.log("id = ",c_user_id,"role = ", c_role )
                                 if (c_user_id !== null) {
                                     localStorage.setItem("c_user_id", c_user_id);
+
                                         notification.show({ message: "Login successful" }, "success");
                                     setTimeout(function () {
                                         if(c_role == "Student")
-                                            window.location.href = "/Student/";
+                                            window.location.href = "/Student/"+c_user_id;
                                         if(c_role == "Teacher")
-                                            window.location.href = "/Teacher/";
+                                            window.location.href = "/Teacher/"+c_user_id;
                                         if(c_role == "Admin")
-                                            window.location.href = "/Admin/";
+                                            window.location.href = "/Admin/"+c_user_id;
                                     }, 1000);
                                 } else {
                                     alert("Login failed!");
